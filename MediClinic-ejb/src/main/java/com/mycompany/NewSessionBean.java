@@ -6,6 +6,10 @@ package com.mycompany;
 
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -15,6 +19,13 @@ import javax.ejb.LocalBean;
 @LocalBean
 public class NewSessionBean {
 
+    
+    @Inject
+    private HttpServletRequest request;
+    
+    @PersistenceContext(unitName="um_mediclinicdb")
+    private EntityManager em;
+    
     public void businessMethod() {
     }
 
