@@ -33,6 +33,14 @@ public class LoginBean {
     @ManagedProperty(value = "#{loggedInUser}")
     private LoggedInUser loggedInUser;
     
+    /**
+     * Authenticate a user using the provided email and password
+     * If the authenticate is successful the user information is stored in the logged in user session 
+     * and the user is redirected to the dashboard.
+     * If authentication fails, an error message is displayed.
+     * 
+     * @return dashboard URL if successful or null if authentication fails 
+     */
     public String login(){
         try{
             User user = authService.login(email, password);
@@ -44,24 +52,48 @@ public class LoginBean {
         }
     }
     
+    /**
+     * Retrieves the email address entered by the user.
+     *
+     * @return the user's email address
+     */
     public String getEmail(){
         return email;
     }
     
+    /**
+     * Updates the email address used for authentication.
+     *
+     * @param email the user's email address
+     */
     public void setEmail(String email){
         this.email = email;
     }
     
+    /**
+     * Retrieves the password entered by the user.
+     *
+     * @return the user's password
+     */
     public String getPassword(){
         return password;
     }
     
+    /**
+     * Updates the password used for authentication.
+     *
+     * @param password the user's password
+     */
     public void setPassword(String password){
         this.password = password;
     }
     
+    /**
+     * Sets the currently logged-in user object.
+     *
+     * @param loggedInUser the object containing the current user's session information
+     */
     public void setLoggedInUser(LoggedInUser loggedInUser){
         this.loggedInUser = loggedInUser;
     }
-    
 }

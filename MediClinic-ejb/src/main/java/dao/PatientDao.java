@@ -17,14 +17,26 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class PatientDao {
-
+    
+    // EntityManager used to interact with the persistence context.
     @PersistenceContext(unitName = "um_mediclinicdb")
     private EntityManager em;
 
+    /**
+     * Saves a new patient record to the database.
+     *
+     * @param patient
+     * @throws Exception 
+     */
     public void create(Patient patient) throws Exception {
         em.persist(patient);
     }
 
+    /**
+     * Retrieves a patient by their unique id
+     * @param id
+     * @return 
+     */
     public Patient findById(Long id) {
         if (id == null) {
             return null;
@@ -32,6 +44,11 @@ public class PatientDao {
         return em.find(Patient.class, id);
     }
 
+    /**
+     * Retrieves patient by their phone number. 
+     * @param phone
+     * @return 
+     */
     public Patient findByPhone(String phone) {
         try {
             return em.createQuery("SELECT p FROM Patient p WHERE p.phone = :phone", Patient.class)

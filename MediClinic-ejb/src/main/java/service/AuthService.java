@@ -28,9 +28,10 @@ import util.TokenUtil;
 @Stateless
 public class AuthService {
 
-    private static final long EMAIL_TOKEN_VALIDITY_MS = 24L * 60 * 60 * 1000; // 24 hours
-    private static final long RESET_TOKEN_VALIDITY_MS = 60L * 60 * 1000;      // 1 hour
+    private static final long EMAIL_TOKEN_VALIDITY_MS = 24L * 60 * 60 * 1000;   // Verification email expires after 24 hours.
+    private static final long RESET_TOKEN_VALIDITY_MS = 60L * 60 * 1000;            // Password reset link expires after 1 hour.
 
+    // Data access objects.
     @EJB private UserDao userDao;
     @EJB private RoleDao roleDao;
     @EJB private PatientDao patientDao;
@@ -38,16 +39,32 @@ public class AuthService {
     @EJB private PasswordResetDao passwordResetDao;
     @EJB private EmailService emailService;
 
+    
+    /**
+     * Register a new patient account
+     * 
+     * @param email User's email address
+     * @param password User's password
+     * @param name User's full name
+     * @param phone User's phone number
+     * @return Newly created user
+     * @throws AuthException 
+     * @throws Exception 
+     */
     public User registerPatient(String email, String password, String name, String phone) throws AuthException, Exception {
+        
+        //Prevents duplicate users
         if (userDao.existsByEmail(email)) {
             throw new AuthException("An account with this email already exists.");
         }
-
+        
+        // Retrives Patient role
         Role patientRole = roleDao.findByName("PATIENT");
         if (patientRole == null) {
             throw new AuthException("PATIENT role is not configured.");
         }
 
+        // Create user account
         User user = new User();
         user.setEmail(email);
         user.setPassword(PasswordUtil.hash(password));
@@ -56,12 +73,14 @@ public class AuthService {
         user.setEmailVerified(false);
         userDao.create(user);
 
+        // Creates patient profile
         Patient patient = new Patient();
         patient.setUser(user);
         patient.setName(name);
         patient.setPhone(phone);
         patientDao.create(patient);
 
+        // Generates an email verification token
         String token = TokenUtil.generateToken();
         EmailVerification ev = new EmailVerification();
         ev.setUser(user);
@@ -75,6 +94,11 @@ public class AuthService {
         return user;
     }
 
+    /**
+     * Verifies a user's email using the supplied token
+     * @param token
+     * @throws AuthException 
+     */
     public void verifyEmail(String token) throws AuthException {
         EmailVerification ev = emailVerificationDao.findByToken(token);
         if (ev == null) {
@@ -87,17 +111,29 @@ public class AuthService {
             throw new AuthException("This verification link has expired.");
         }
 
+        // Markes the verification as completed. 
         ev.setVerified(true);
         emailVerificationDao.update(ev);
 
+        // Activate the user account
         User user = ev.getUser();
         user.setEmailVerified(true);
         user.setStatus(User.UserStatus.ACTIVE);
         userDao.update(user);
     }
 
+    /**
+     * Authenticate user using their email and password
+     * 
+     * @param email 
+     * @param password
+     * @return
+     * @throws AuthException 
+     */
     public User login(String email, String password) throws AuthException {
+        
         User user = userDao.findByEmail(email);
+        
         if (user == null || !PasswordUtil.matches(password, user.getPassword())) {
             throw new AuthException("Invalid email or password.");
         }
@@ -110,11 +146,17 @@ public class AuthService {
         return user;
     }
 
+    /**
+     * Create a password reset for a user.
+     * @param email 
+     */
     public void requestPasswordReset(String email) {
         User user = userDao.findByEmail(email);
+        // Do nothing if the email is unknown to prevent revealing whether an account exists.
         if (user == null) {
-            return; // don't reveal whether the email exists
+            return; 
         }
+        // Generate password reset token.
         String token = TokenUtil.generateToken();
         PasswordReset pr = new PasswordReset();
         pr.setUser(user);
@@ -126,6 +168,12 @@ public class AuthService {
         emailService.sendPasswordResetEmail(email, token);
     }
 
+    /**
+     * Resets a user's password using a valid reset token.
+     * @param token 
+     * @param newPassword
+     * @throws AuthException 
+     */
     public void resetPassword(String token, String newPassword) throws AuthException {
         PasswordReset pr = passwordResetDao.findByToken(token);
         if (pr == null || pr.isUsed()) {

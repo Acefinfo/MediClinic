@@ -29,6 +29,14 @@ public class ResetPasswordBean {
     @EJB 
     private AuthService authService;
     
+    /**
+     * Handles the password reset.
+     * Checks that the new password matches the
+     * confirmation password. If validation succeeds, it calls the
+     * authentication service to update the password.
+     * Redirect to login page if successful else stay on current page.
+     * @return 
+     */
     public String reset(){
         
         if (newPassword == null || !newPassword.equals(confirmPassword)) {
@@ -47,28 +55,57 @@ public class ResetPasswordBean {
         
     }
     
+     /** Gets the password reset token.
+     *
+     * @return reset token
+     */
     public String getToken() {
         return token;
     }
 
+    /**
+     * Sets the password reset token.
+     *
+     * @param token password reset token
+     */
     public void setToken(String token) {
         this.token = token;
     }
 
+    /**
+     * Gets the new password.
+     *
+     * @return new password
+     */
     public String getNewPassword() {
         return newPassword;
     }
 
+    /**
+     * Sets the new password.
+     *
+     * @param newPassword new password entered by the user
+     */
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
 
+    /**
+     * Gets the confirmation password.
+     *
+     * @return confirmation password
+     */
     public String getConfirmPassword() {
         return confirmPassword;
     }
 
+    /**
+     * Sets the confirmation password.
+     *
+     * @param confirmPassword password confirmation value
+     */
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
-    
+
 }

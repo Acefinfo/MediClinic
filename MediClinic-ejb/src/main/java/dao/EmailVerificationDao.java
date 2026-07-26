@@ -18,17 +18,32 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class EmailVerificationDao {
 
+    // EntityManager used to interact with the persistence context.
     @PersistenceContext(unitName = "um_mediclinicdb")
     private EntityManager em;
 
+    /**
+     * Saves a new email verification record the database.
+     * @param ev 
+     */
     public void create(EmailVerification ev) {
         em.persist(ev);
     }
 
+    /**
+     * Updates the existing email record
+     * @param ev
+     * @return 
+     */
     public EmailVerification update(EmailVerification ev) {
         return em.merge(ev);
     }
 
+    /**
+     * Retrieves an email verification record using its token. 
+     * @param token
+     * @return 
+     */
     public EmailVerification findByToken(String token) {
         try {
             return em.createQuery("SELECT e FROM EmailVerification e WHERE e.token = :token", EmailVerification.class)

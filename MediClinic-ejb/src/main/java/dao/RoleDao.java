@@ -19,13 +19,24 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class RoleDao {
 
+    // EntityManager used to interact with the persistence context.
     @PersistenceContext(unitName = "um_mediclinicdb")
     private EntityManager em;
 
+    /**
+     * Save new role to the database.
+     * @param role 
+     */
     public void create(Role role) {
         em.persist(role);
     }
 
+    /**
+     * Retrieves a role by its name.
+     * 
+     * @param name
+     * @return 
+     */
     public Role findByName(String name) {
         try {
             return em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
@@ -36,6 +47,11 @@ public class RoleDao {
         }
     }
 
+    /**
+     * Retrieves all roles stored in the database
+     * 
+     * @return 
+     */
     public List<Role> findAll() {
         return em.createQuery("SELECT r FROM Role r", Role.class).getResultList();
     }

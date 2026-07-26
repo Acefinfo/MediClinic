@@ -18,17 +18,32 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class PasswordResetDao {
 
+    // EntityManager used to interact with the persistence context.
     @PersistenceContext(unitName = "um_mediclinicdb")
     private EntityManager em;
 
+    /**
+     * Saves a new password reset record to the database.
+     * @param pr 
+     */
     public void create(PasswordReset pr) {
         em.persist(pr);
     }
 
+    /**
+     * Updates an existing password reset record.
+     * @param pr
+     * @return 
+     */
     public PasswordReset update(PasswordReset pr) {
         return em.merge(pr);
     }
 
+    /**
+     * Retrieves a password reset record using its token 
+     * @param token
+     * @return 
+     */
     public PasswordReset findByToken(String token) {
         try {
             return em.createQuery("SELECT p FROM PasswordReset p WHERE p.token = :token", PasswordReset.class)

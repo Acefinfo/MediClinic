@@ -10,6 +10,11 @@ package service;
  * @author acefonfo
  */
 public class AuthException extends Exception {
+    
+    /**
+     *  Create new Auth Exception with the specified message.
+     * @param message 
+     */
     public AuthException(String message) {
         super(message);
     }
