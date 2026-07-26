@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head><title>Patient Registration</title></h:head>
+<h:body>
+    <h:form id="registerForm">
+        <p:growl id="messages" showDetail="true"/>
+        <p:panel header="Patient Registration">
+            <p:panelGrid columns="2">
+                <p:outputLabel for="name" value="Name"/>
+                <p:inputText id="name" value="#{registerBean.name}" required="true" requiredMessage="Name is required."/>
+
+                <p:outputLabel for="phone" value="Phone Number"/>
+                <p:inputText id="phone" value="#{registerBean.phone}" required="true" requiredMessage="Phone number is required."/>
+
+                <p:outputLabel for="email" value="Email"/>
+                <p:inputText id="email" value="#{registerBean.email}" required="true" requiredMessage="Email is required."/>
+
+                <p:outputLabel for="password" value="Password"/>
+                <p:password id="password" value="#{registerBean.password}" required="true" requiredMessage="Password is required."/>
+
+                <p:outputLabel for="confirmPassword" value="Confirm Password"/>
+                <p:password id="confirmPassword" value="#{registerBean.confirmPassword}" required="true" requiredMessage="Please confirm your password."/>
+            </p:panelGrid>
+
+            <br/>
+            <p:commandButton value="Register" icon="pi pi-check" action="#{registerBean.register}" update="registerForm messages"/>
+
+            <br/><br/>
+            <p:link outcome="login" value="Already have an account? Login"/>
+        </p:panel>
+    </h:form>
+</h:body>
+</html>
