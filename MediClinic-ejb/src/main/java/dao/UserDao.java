@@ -6,6 +6,7 @@
 package dao;
 
 import entity.User;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -79,6 +80,13 @@ public class UserDao {
             // Return null if no matching user exists.
             return null;
         }
+    }
+    
+     public List<User> findByRoleNames(List<String> roleNames) {
+        return em.createQuery(
+                "SELECT u FROM User u WHERE u.role.name IN :names ORDER BY u.email", User.class)
+                .setParameter("names", roleNames)
+                .getResultList();
     }
 
     /**

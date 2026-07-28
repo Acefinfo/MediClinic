@@ -39,6 +39,12 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
+    @Column(name = "name", length = 100)
+    private String name;
+    
+    @Column (name= "phone", length=20)
+    private String phone;
+    
     @Column(name = "email", nullable=false, unique = true, length = 150)
     private String email;
     
@@ -108,6 +114,22 @@ public class User implements Serializable {
     }
     public void setCreatedAt(Date createdAt) { 
         this.createdAt = createdAt; 
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
     
 }

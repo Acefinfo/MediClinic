@@ -7,6 +7,8 @@ package com.mycompany;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import service.AuthException;
 import service.AuthService;
@@ -15,6 +17,8 @@ import service.AuthService;
  *
  * @author acefonfo
  */
+@ManagedBean(name = "registerBean")
+@RequestScoped
 public class RegisterBean {
 
     private String name;

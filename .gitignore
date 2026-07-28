@@ -166,3 +166,8 @@ reports/generated/
 **/build/
 **/nbbuild/
 **/dist/
+
+# ==========================
+# Mail Properties 
+# ==========================
+MediClinic-ejb/src/main/resources/mail.properties

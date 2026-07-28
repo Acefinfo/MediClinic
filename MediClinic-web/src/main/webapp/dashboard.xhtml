@@ -11,10 +11,15 @@ and open the template in the editor.
 
 <h:head><title>Dashboard</title></h:head>
 <h:body>
-    <p:panel header="Dashboard">
-        <h:outputText value="Welcome, #{loggedInUser.user.email} (#{loggedInUser.roleName})"/>
-        <br/><br/>
-        <p:commandButton value="Logout" action="#{loggedInUser.logout}" ajax="false"/>
-    </p:panel>
+    <h:form id="dashboardForm">
+        <p:panel header="Dashboard">
+            <h:outputText value="Welcome, #{loggedInUser.user.email} (#{loggedInUser.roleName})"/>
+            <br/><br/>
+            <p:commandButton value="Logout" action="#{loggedInUser.logout}" ajax="false"/>
+
+            <br/><br/>
+            <p:link outcome="/admin/staff-list" value="Manage Staff" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+        </p:panel>
+    </h:form>
 </h:body>
 </html>
