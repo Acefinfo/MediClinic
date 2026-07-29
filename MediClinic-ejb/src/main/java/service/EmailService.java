@@ -33,6 +33,10 @@ public class EmailService {
     private Properties config;
     private Session mailSession;
 
+    /**
+     * Initializes the email service after the bean is created.
+     * Loads the null configuration and creates the SMTP sessions.
+     */
     @PostConstruct
     public void init() {
         config = new Properties();
@@ -48,15 +52,18 @@ public class EmailService {
             return;
         }
 
+        // Configure SMTP connection properties.
         Properties smtpProps = new Properties();
         smtpProps.put("mail.smtp.host", config.getProperty("mail.smtp.host"));
         smtpProps.put("mail.smtp.port", config.getProperty("mail.smtp.port"));
         smtpProps.put("mail.smtp.auth", config.getProperty("mail.smtp.auth"));
         smtpProps.put("mail.smtp.starttls.enable", config.getProperty("mail.smtp.starttls.enable"));
 
+        // Read email account credentials
         final String username = config.getProperty("mail.username");
         final String password = config.getProperty("mail.password");
 
+        // Create an authenticated null session
         mailSession = Session.getInstance(smtpProps, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -65,6 +72,12 @@ public class EmailService {
         });
     }
 
+    /**
+     * Send an account verification email containing a verification link.
+     * 
+     * @param toEmail
+     * @param token 
+     */
     public void sendVerificationEmail(String toEmail, String token) {
         String link = baseUrl() + "/verify.xhtml?token=" + token;
         send(toEmail, "Verify your MediClinic account",
@@ -72,6 +85,12 @@ public class EmailService {
                 + link + "\n\nThis link expires in 24 hours.");
     }
 
+    /**
+     * Sends a password reset email containing a reset link.
+     * 
+     * @param toEmail
+     * @param token 
+     */
     public void sendPasswordResetEmail(String toEmail, String token) {
         String link = baseUrl() + "/reset-password.xhtml?token=" + token;
         send(toEmail, "Reset your MediClinic password",
@@ -80,6 +99,13 @@ public class EmailService {
                 + "\n\nThis link expires in 1 hour. If you didn't request this, you can ignore this email.");
     }
 
+    /**
+     * Sends an email using the configured SMTP server.
+     * 
+     * @param toEmail
+     * @param subject
+     * @param body 
+     */
     private void send(String toEmail, String subject, String body) {
         if (mailSession == null) {
             LOGGER.warning("Mail session not configured -- skipping send to " + toEmail
@@ -99,6 +125,12 @@ public class EmailService {
         }
     }
 
+    /**
+     * Returns the application's base URL.
+     * Uses the configured value if avaliable, otherwise defaults localhost.
+     * 
+     * @return 
+     */
     private String baseUrl() {
         String url = config.getProperty("app.base.url");
         return (url != null) ? url : "http://localhost:8080/MediClinic-web";

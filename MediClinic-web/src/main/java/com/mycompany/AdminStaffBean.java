@@ -28,14 +28,17 @@ public class AdminStaffBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // Stores all staff accounts displayed on the page
     private List<User> staffList;
 
+    // Fields used when creating a new staff account
     private String name;
     private String phone;
     private String email;
     private String password;
     private String roleName = "RECEPTIONIST";
 
+    // Feilds used when editing an existing staff account
     private Long editUserId;
     private String editName;
     private String editPhone;
@@ -47,15 +50,26 @@ public class AdminStaffBean implements Serializable {
     @ManagedProperty(value = "#{loggedInUser}")
     private LoggedInUser loggedInUser;
 
+    /**
+     * Initializes the managed bean after construction.
+     * Loads all staff members into the table.
+     */
     @PostConstruct
     public void init() {
         loadStaff();
     }
 
+    /**
+     * Retrieves all staff account from the database
+     */
     public void loadStaff() {
         staffList = adminUserService.listAllStaff();
     }
 
+    /**
+     * Creates new staff account using the entered from data.
+     * Clears the form and refreshes the staff list if successful
+     */
     public void createStaff() {
         try {
             adminUserService.createStaffUser(loggedInUser.getUser(), email, password, name, phone, roleName);
@@ -71,6 +85,10 @@ public class AdminStaffBean implements Serializable {
         }
     }
 
+    /**
+     * Loads the selected staff members details into edit form.
+     * @param user 
+     */
     public void startEdint(User user) {
         editUserId = user.getId();
         editName = user.getName();
@@ -78,6 +96,9 @@ public class AdminStaffBean implements Serializable {
         editRoleName = user.getRole().getName();
     }
 
+    /**
+     * Saves changes made to a staff member's profile and role.
+     */
     public void saveEdit() {
         try {
             adminUserService.updateStaffProfile(loggedInUser.getUser(), editUserId, editName, editPhone);
@@ -89,6 +110,11 @@ public class AdminStaffBean implements Serializable {
         }
     }
 
+    /**
+     * Activates or deactivates a staff account depending on its current status. 
+     * 
+     * @param user 
+     */
     public void toggleStatus(User user) {
         try {
             if (user.getStatus() == User.UserStatus.DEACTIVATED) {
@@ -102,6 +128,11 @@ public class AdminStaffBean implements Serializable {
         }
     }
 
+    /**
+     * Resets the selected staff member's password.
+     * The generated password is displayed once to the administrator.
+     * @param user 
+     */
     public void resetPassword(User user) {
         try {
             String newPassword = adminUserService.adminResetPassword(loggedInUser.getUser(), user.getId());
@@ -113,10 +144,18 @@ public class AdminStaffBean implements Serializable {
         }
     }
 
+    /**
+     * Display a JSF FacesMessage on the page
+     * @param severity
+     * @param summary
+     * @param detail 
+     */
     private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }
-
+    
+    
+    // Getter methods
     public List<User> getStaffList() {
         return staffList;
     }
@@ -185,6 +224,10 @@ public class AdminStaffBean implements Serializable {
         this.editRoleName = editRoleName;
     }
 
+    /**
+     * Injects the currently logged-in user
+     * @param loggedInUser 
+     */
     public void setLoggedInUser(LoggedInUser loggedInUser) {
         this.loggedInUser = loggedInUser;
     }

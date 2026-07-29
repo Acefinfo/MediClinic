@@ -26,6 +26,10 @@ public class VerifyEmailBean {
     @EJB
     private AuthService authService;
 
+    /**
+     * Verifies the users email using the provided tokens.
+     * Displays either a success or failure message. 
+     */
     public void verify() {
         try {
             authService.verifyEmail(token);
@@ -37,9 +41,19 @@ public class VerifyEmailBean {
         }
     }
 
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
+    public String getToken() {
+        return token;
+    }
 
-    public String getResultMessage() { return resultMessage; }
-    public boolean isSuccess() { return success; }
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getResultMessage() {
+        return resultMessage;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
 }

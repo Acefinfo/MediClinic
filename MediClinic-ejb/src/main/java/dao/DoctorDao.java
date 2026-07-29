@@ -23,14 +23,30 @@ public class DoctorDao {
     @PersistenceContext(unitName = "um_mediclinicdb")
     private EntityManager em;
     
+    /**
+     * Saves a new doctor entity to the database.
+     * 
+     * @param doctor 
+     */
     public void create(Doctor doctor){
         em.persist(doctor);
     }
     
+    /**
+     * Updates an existing Doctor entity in the database.
+     * 
+     * @param doctor
+     * @return 
+     */
     public Doctor update(Doctor doctor){
         return em.merge(doctor);
     }
     
+    /**
+     * Find a doctor by its primary key (Id)
+     * @param id
+     * @return 
+     */
     public Doctor findById(Long id){
         if(id == null){
             return null;
@@ -38,6 +54,11 @@ public class DoctorDao {
         return em.find(Doctor.class, id);
     }
     
+    /**
+     * Finds a Doctor associated with a specific User Id.
+     * @param userId
+     * @return 
+     */
     public Doctor findByUserId(Long userId){
         try{
             return em.createQuery("SELECT d FROM Doctor d WHERE d.user.id = :userId", Doctor.class)
@@ -48,8 +69,12 @@ public class DoctorDao {
         }
     }
     
+    /**
+     * Retrieves all Doctor from the database.
+     * @return 
+     */
     public List <Doctor> findAll(){
-        return em.createQuery("SELECT d FROM doctor d")
+        return em.createQuery("SELECT d FROM Doctor d",Doctor.class)
                 .getResultList();
     }
 }
