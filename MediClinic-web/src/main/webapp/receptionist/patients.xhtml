@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head><title>Patients</title></h:head>
+<h:body>
+    <h:form id="createForm">
+        <p:growl id="messages" showDetail="true"/>
+
+        <p:panel header="Register Walk-in Patient">
+            <p:panelGrid columns="2">
+                <p:outputLabel for="name" value="Name"/>
+                <p:inputText id="name" value="#{patientDirectoryBean.name}" required="true"/>
+
+                <p:outputLabel for="phone" value="Phone"/>
+                <p:inputText id="phone" value="#{patientDirectoryBean.phone}" required="true"/>
+
+                <p:outputLabel for="email" value="Email"/>
+                <p:inputText id="email" value="#{patientDirectoryBean.email}" required="true"/>
+
+                <p:outputLabel for="password" value="Temporary Password"/>
+                <p:password id="password" value="#{patientDirectoryBean.password}" required="true"/>
+
+                <p:outputLabel for="dob" value="Date of Birth"/>
+                <p:calendar id="dob" value="#{patientDirectoryBean.dateOfBirth}" pattern="yyyy-MM-dd"/>
+
+                <p:outputLabel for="gender" value="Gender"/>
+                <p:selectOneMenu id="gender" value="#{patientDirectoryBean.gender}">
+                    <f:selectItem itemLabel="Select" itemValue="#{null}"/>
+                    <f:selectItem itemLabel="Male" itemValue="MALE"/>
+                    <f:selectItem itemLabel="Female" itemValue="FEMALE"/>
+                    <f:selectItem itemLabel="Other" itemValue="OTHER"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel for="address" value="Address"/>
+                <p:inputText id="address" value="#{patientDirectoryBean.address}"/>
+            </p:panelGrid>
+
+            <br/>
+            <p:commandButton value="Register Patient" icon="pi pi-plus"
+                              action="#{patientDirectoryBean.registerWalkIn}" update="createForm listForm"/>
+        </p:panel>
+    </h:form>
+
+    <br/>
+
+    <h:form id="listForm">
+        <p:panel header="Patients">
+            <p:inputText value="#{patientDirectoryBean.searchKeyword}" placeholder="Search by name / phone / email"/>
+            <p:commandButton value="Search" icon="pi pi-search" action="#{patientDirectoryBean.search}" update="listForm"/>
+            <p:commandButton value="Reset" action="#{patientDirectoryBean.loadPatients}" update="listForm"/>
+
+            <p:dataTable var="patient" value="#{patientDirectoryBean.patients}" rowKey="#{patient.id}">
+                <p:column headerText="Name"><h:outputText value="#{patient.name}"/></p:column>
+                <p:column headerText="Phone"><h:outputText value="#{patient.phone}"/></p:column>
+                <p:column headerText="Email"><h:outputText value="#{patient.user.email}"/></p:column>
+                <p:column headerText="Gender"><h:outputText value="#{patient.gender}"/></p:column>
+                <p:column headerText="DOB"><h:outputText value="#{patient.dateOfBirth}"><f:convertDateTime pattern="yyyy-MM-dd"/></h:outputText></p:column>
+                <p:column headerText="Actions">
+                    <p:commandButton value="Edit" icon="pi pi-pencil"
+                                      actionListener="#{patientDirectoryBean.startEdit(patient)}"
+                                      oncomplete="PF('editDialog').show()" update=":editForm" process="@this"/>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+    </h:form>
+
+    <p:dialog header="Edit Patient" widgetVar="editDialog" modal="true">
+        <h:form id="editForm">
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Name"/>
+                <p:inputText value="#{patientDirectoryBean.editName}" required="true"/>
+
+                <p:outputLabel value="Phone"/>
+                <p:inputText value="#{patientDirectoryBean.editPhone}"/>
+
+                <p:outputLabel value="Date of Birth"/>
+                <p:calendar value="#{patientDirectoryBean.editDateOfBirth}" pattern="yyyy-MM-dd"/>
+
+                <p:outputLabel value="Gender"/>
+                <p:selectOneMenu value="#{patientDirectoryBean.editGender}">
+                    <f:selectItem itemLabel="Male" itemValue="MALE"/>
+                    <f:selectItem itemLabel="Female" itemValue="FEMALE"/>
+                    <f:selectItem itemLabel="Other" itemValue="OTHER"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel value="Address"/>
+                <p:inputText value="#{patientDirectoryBean.editAddress}"/>
+
+                <p:outputLabel value="Allergies"/>
+                <p:inputTextarea value="#{patientDirectoryBean.editAllergies}"/>
+
+                <p:outputLabel value="Chronic Conditions"/>
+                <p:inputTextarea value="#{patientDirectoryBean.editChronicConditions}"/>
+
+                <p:outputLabel value="Emergency Contact Name"/>
+                <p:inputText value="#{patientDirectoryBean.editEmergencyContactName}"/>
+
+                <p:outputLabel value="Emergency Contact Phone"/>
+                <p:inputText value="#{patientDirectoryBean.editEmergencyContactPhone}"/>
+            </p:panelGrid>
+
+            <br/>
+            <p:commandButton value="Save" action="#{patientDirectoryBean.saveEdit}"
+                              oncomplete="PF('editDialog').hide()" update=":listForm"/>
+        </h:form>
+    </p:dialog>
+</h:body>
+</html>

@@ -19,6 +19,9 @@ and open the template in the editor.
 
             <br/><br/>
             <p:link outcome="/admin/staff-list" value="Manage Staff" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+            <p:link outcome="/receptionist/patients" value="Manage Patients" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+            <p:link outcome="/admin/patients" value="View Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+            <p:link outcome="/patient/profile" value="My Profile" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
         </p:panel>
     </h:form>
 </h:body>

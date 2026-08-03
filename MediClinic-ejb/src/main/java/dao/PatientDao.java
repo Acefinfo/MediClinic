@@ -6,6 +6,7 @@
 package dao;
 
 import entity.Patient;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -57,5 +58,52 @@ public class PatientDao {
         } catch (NoResultException e) {
             return null;
         }
+    }
+    
+    /**
+     * Searches patient by name, phone number or email
+     * @return 
+     */
+    public List<Patient> findAll(){
+        return em.createQuery("SELECT p from Patient p ORDER BY p.name", Patient.class)
+                .getResultList();
+    }
+    
+    /**
+     * Searches patient profile linked to to user id.
+     * @param userId
+     * @return 
+     */
+    public  Patient findByUserId(Long userId){
+        try {
+            return em.createQuery("SELECT p FROM Patient p WHERE p.user.id = :userId", Patient.class)
+                    .setParameter("userId", userId)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Searches patients by name, phone, or email (case-insensitive, partial match).
+     * @param keyword
+     * @return
+     */
+    public List<Patient> search(String keyword) {
+        String like = "%" + keyword.toLowerCase() + "%";
+        return em.createQuery(
+                "SELECT p FROM Patient p WHERE lower(p.name) LIKE :kw OR p.phone LIKE :kw "
+                + "OR lower(p.user.email) LIKE :kw ORDER BY p.name", Patient.class)
+                .setParameter("kw", like)
+                .getResultList();
+    }
+    
+    /**
+     * Updates an existing patient record. 
+     * @param patient
+     * @return 
+     */
+    public Patient update(Patient patient){
+        return em.merge(patient);
     }
 }
