@@ -66,6 +66,9 @@ public class User implements Serializable {
     @Column(name = "created_at", nullable = false)
     private Date createdAt = new Date();
     
+    @Column(name = "photo_path", length = 255)
+    private String photoPath;
+    
     public Long getId(){
         return id;
     }
@@ -131,5 +134,12 @@ public class User implements Serializable {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+    
+    public String getPhotoPath() {
+    return photoPath;
+}
+public void setPhotoPath(String photoPath) {
+    this.photoPath = photoPath;
+}
     
 }

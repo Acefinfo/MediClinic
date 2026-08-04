@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head><title>My Schedule</title></h:head>
+<h:body>
+    <h:form id="addForm">
+        <p:growl id="messages" showDetail="true"/>
+
+        <p:panel header="Add Availability Slot" rendered="#{doctorScheduleBean.doctor ne null}">
+            <p:panelGrid columns="2">
+                <p:outputLabel for="day" value="Day of Week"/>
+                <p:selectOneMenu id="day" value="#{doctorScheduleBean.dayOfWeek}">
+                    <f:selectItem itemLabel="Sunday" itemValue="SUNDAY"/>
+                    <f:selectItem itemLabel="Monday" itemValue="MONDAY"/>
+                    <f:selectItem itemLabel="Tuesday" itemValue="TUESDAY"/>
+                    <f:selectItem itemLabel="Wednesday" itemValue="WEDNESDAY"/>
+                    <f:selectItem itemLabel="Thursday" itemValue="THURSDAY"/>
+                    <f:selectItem itemLabel="Friday" itemValue="FRIDAY"/>
+                    <f:selectItem itemLabel="Saturday" itemValue="SATURDAY"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel for="start" value="Start Time"/>
+                <p:calendar id="start" value="#{doctorScheduleBean.startTime}" timeOnly="true" pattern="HH:mm"/>
+
+                <p:outputLabel for="end" value="End Time"/>
+                <p:calendar id="end" value="#{doctorScheduleBean.endTime}" timeOnly="true" pattern="HH:mm"/>
+
+                <p:outputLabel for="max" value="Max Patients"/>
+                <p:inputText id="max" value="#{doctorScheduleBean.maxPatients}"/>
+            </p:panelGrid>
+
+            <br/>
+            <p:commandButton value="Add Slot" icon="pi pi-plus" action="#{doctorScheduleBean.addSchedule}"
+                              update="addForm listForm"/>
+        </p:panel>
+
+        <p:panel header="No Doctor Profile Found" rendered="#{doctorScheduleBean.doctor eq null}">
+            <h:outputText value="No doctor profile is linked to your account. Contact the administrator."/>
+        </p:panel>
+        
+        
+    </h:form>
+
+    <br/>
+
+    <h:form id="listForm">
+        <p:panel header="My Weekly Availability" rendered="#{doctorScheduleBean.doctor ne null}">
+            <p:dataTable var="s" value="#{doctorScheduleBean.schedules}" rowKey="#{s.id}">
+                <p:column headerText="Day"><h:outputText value="#{s.dayOfWeek}"/></p:column>
+                <p:column headerText="Start">
+                    <h:outputText value="#{s.startTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
+                </p:column>
+                <p:column headerText="End">
+                    <h:outputText value="#{s.endTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
+                </p:column>
+                <p:column headerText="Max Patients"><h:outputText value="#{s.maxPatients}"/></p:column>
+                <p:column headerText="Actions">
+                    <p:commandButton value="Edit" icon="pi pi-pencil"
+                                      actionListener="#{doctorScheduleBean.startEdit(s)}"
+                                      oncomplete="PF('editDialog').show()" update=":editForm" process="@this"/>
+                    <p:commandButton value="Delete" icon="pi pi-trash"
+                                      action="#{doctorScheduleBean.deleteSchedule(s)}" update="listForm"/>
+                </p:column>
+                
+            </p:dataTable>
+            
+            
+        </p:panel>
+        
+    </h:form>
+
+    <p:dialog header="Edit Availability Slot" widgetVar="editDialog" modal="true">
+        <h:form id="editForm">
+            <p:panelGrid columns="2">
+                <p:outputLabel for="editDay" value="Day of Week"/>
+                <p:selectOneMenu id="editDay" value="#{doctorScheduleBean.editDayOfWeek}">
+                    <f:selectItem itemLabel="Sunday" itemValue="SUNDAY"/>
+                    <f:selectItem itemLabel="Monday" itemValue="MONDAY"/>
+                    <f:selectItem itemLabel="Tuesday" itemValue="TUESDAY"/>
+                    <f:selectItem itemLabel="Wednesday" itemValue="WEDNESDAY"/>
+                    <f:selectItem itemLabel="Thursday" itemValue="THURSDAY"/>
+                    <f:selectItem itemLabel="Friday" itemValue="FRIDAY"/>
+                    <f:selectItem itemLabel="Saturday" itemValue="SATURDAY"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel for="editStart" value="Start Time"/>
+                <p:calendar id="editStart" value="#{doctorScheduleBean.editStartTime}" timeOnly="true" pattern="HH:mm"/>
+
+                <p:outputLabel for="editEnd" value="End Time"/>
+                <p:calendar id="editEnd" value="#{doctorScheduleBean.editEndTime}" timeOnly="true" pattern="HH:mm"/>
+
+                <p:outputLabel for="editMax" value="Max Patients"/>
+                <p:inputText id="editMax" value="#{doctorScheduleBean.editMaxPatients}"/>
+            </p:panelGrid>
+
+            <br/>
+            <p:commandButton value="Save" action="#{doctorScheduleBean.saveEdit}"
+                              oncomplete="PF('editDialog').hide()" update=":listForm"/>
+        </h:form>
+        
+    </p:dialog>
+</h:body>
+
+
+</html>

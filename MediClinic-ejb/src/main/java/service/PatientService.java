@@ -36,10 +36,27 @@ public class PatientService {
     private ActivityLogDao activityLogDao;
 
     /**
-     * Registers a walk-in patient at the front desk. Creates both the login
-     * account and the patient record. Because staff verified the person in
-     * person, the account is activated immediately (no email verification
-     * step required).
+     * Register new  walk in patient.
+     * 
+     * Process: 
+     *      1. Check whether the email is already registered.
+     *      2. Retrieve the PATIENT role.
+     *      3. Create a user account.
+     *      4. Create the patient profile.
+     *      5. Record the registration in the activity log.
+     *
+     * Since the patient registers in person, the account is immediately
+     * activated and marked as email verified.
+     * @param actor
+     * @param email
+     * @param password
+     * @param name
+     * @param phone
+     * @param dateOfBirth
+     * @param gender
+     * @param address
+     * @return Newly created patient record. 
+     * @throws AuthException 
      */
     public Patient registerWalkIn(User actor, String email, String password, String name, String phone,
             Date dateOfBirth, Patient.Gender gender, String address) throws AuthException {
@@ -79,10 +96,22 @@ public class PatientService {
         return patient;
     }
 
+    /**
+     * Returns all patient in the system
+     * 
+     * @return 
+     */
     public List<Patient> listAll() {
         return patientDao.findAll();
     }
 
+    /**
+     * Searches patients using a keyword
+     * If no keyword is supplied all patients are returned. 
+     * 
+     * @param keyword
+     * @return 
+     */
     public List<Patient> search(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return listAll();
@@ -99,8 +128,29 @@ public class PatientService {
     }
 
     /**
-     * Patient editing their own profile: demographic + medical info only.
-     * Identity fields (name) are intentionally excluded from self-edit.
+     * Allows patients to update thir own profile.
+     * 
+     * Editable fields:
+     *      - Phone
+     *      - Date of birth
+     *      - Gender
+     *      - Address
+     *      - Allergies
+     *      - Chronic conditions
+     *      - Emergency contact
+     *
+     * Name is intentionally excluded to preserve identity integrity.
+     * 
+     * @param actor
+     * @param phone
+     * @param dateOfBirth
+     * @param gender
+     * @param address
+     * @param allergies
+     * @param chronicConditions
+     * @param emergencyContactName
+     * @param emergencyContactPhone
+     * @throws AuthException 
      */
     public void updateOwnProfile(User actor, String phone, Date dateOfBirth, Patient.Gender gender,
             String address, String allergies, String chronicConditions,
@@ -120,9 +170,22 @@ public class PatientService {
         log(actor, "UPDATE_OWN_PROFILE", "Patient", patient.getId(), "Patient updated their own profile");
     }
 
-    /**
-     * Admin/Receptionist editing any patient's full record, including name/phone.
-     */
+   /**
+    * Allows administrator or receptionist to update patients record. 
+    * 
+    * @param actor
+    * @param patientId
+    * @param name
+    * @param phone
+    * @param dateOfBirth
+    * @param gender
+    * @param address
+    * @param allergies
+    * @param chronicConditions
+    * @param emergencyContactName
+    * @param emergencyContactPhone
+    * @throws AuthException 
+    */
     public void updatePatient(User actor, Long patientId, String name, String phone, Date dateOfBirth,
             Patient.Gender gender, String address, String allergies, String chronicConditions,
             String emergencyContactName, String emergencyContactPhone) throws AuthException {
@@ -145,6 +208,13 @@ public class PatientService {
         log(actor, "UPDATE_PATIENT", "Patient", patient.getId(), "Updated patient record for " + patient.getName());
     }
 
+    /**
+     * Retrieves the patient profile associated with user account
+     * 
+     * @param userId
+     * @return
+     * @throws AuthException 
+     */
     private Patient requirePatientForUser(Long userId) throws AuthException {
         Patient patient = patientDao.findByUserId(userId);
         if (patient == null) {
@@ -153,6 +223,15 @@ public class PatientService {
         return patient;
     }
 
+    /**
+     * Create an activity log entry for auditing purposes.
+     * 
+     * @param actor
+     * @param action
+     * @param entityName
+     * @param entityId
+     * @param details 
+     */
     private void log(User actor, String action, String entityName, Long entityId, String details) {
         ActivityLog entry = new ActivityLog();
         entry.setUser(actor);
