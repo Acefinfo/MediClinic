@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head><title>Appointments</title></h:head>
+<h:body>
+    <h:form id="apptForm">
+        <p:growl id="messages" showDetail="true"/>
+
+        <p:panel header="All Appointments">
+            <p:dataTable var="a" value="#{staffAppointmentBean.appointments}" rowKey="#{a.id}">
+                
+                <p:column headerText="Patient"><h:outputText value="#{a.patient.name}"/></p:column>
+                
+                <p:column headerText="Doctor"><h:outputText value="#{a.doctor.name}"/></p:column>
+                
+                <p:column headerText="Date">
+                    <h:outputText value="#{a.appointmentDate}"><f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/></h:outputText>
+                </p:column>
+                
+                <p:column headerText="Time">
+                    <h:outputText value="#{a.appointmentTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
+                </p:column>
+                
+                <p:column headerText="Status"><h:outputText value="#{a.status}"/></p:column>
+                
+                <p:column headerText="Reason"><h:outputText value="#{a.reason}"/></p:column>
+                
+                <p:column headerText="Actions">
+                    <p:commandButton value="Approve" icon="pi pi-check"
+                                      action="#{staffAppointmentBean.approve(a)}" update="apptForm"
+                                      rendered="#{a.status == 'REQUESTED'}"/>
+                    <p:commandButton value="Cancel" icon="pi pi-times"
+                                      action="#{staffAppointmentBean.cancel(a)}" update="apptForm"
+                                      rendered="#{a.status == 'REQUESTED' or a.status == 'APPROVED'}"/>
+                    
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+    </h:form>
+</h:body>
+</html>

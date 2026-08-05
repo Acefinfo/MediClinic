@@ -9,35 +9,42 @@ and open the template in the editor.
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
 
-<h:head><title>Dashboard</title></h:head>
-<h:body>
-    <h:form id="dashboardForm">
-        <p:panel header="Dashboard">
-            <p:graphicImage value="/photo/#{loggedInUser.user.id}" cache="false" width="80"
-                             rendered="#{loggedInUser.user.photoPath ne null}"/>
-            <br/>
-            <h:outputText value="Welcome, #{loggedInUser.user.email} (#{loggedInUser.roleName})"/>
-            <br/><br/>
-            <p:commandButton value="Logout" action="#{loggedInUser.logout}" ajax="false"/>
+    <h:head><title>Dashboard</title></h:head>
+    <h:body>
+        <h:form id="dashboardForm">
+            <p:panel header="Dashboard">
+                <p:graphicImage value="/photo/#{loggedInUser.user.id}" cache="false" width="80"
+                                rendered="#{loggedInUser.user.photoPath ne null}"/>
+                <br/>
+                <h:outputText value="Welcome, #{loggedInUser.user.email} (#{loggedInUser.roleName})"/>
+                <br/><br/>
+                <p:commandButton value="Logout" action="#{loggedInUser.logout}" ajax="false"/>
 
-            <br/><br/>
-            <p:link outcome="/profile-photo" value="Update Profile Photo"/>
+                <br/><br/>
+                <p:link outcome="/profile-photo" value="Update Profile Photo"/>
 
-            <br/><br/>
-            <p:link outcome="/admin/staff-list" value="Manage Staff" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-            <br/>
-            <p:link outcome="/admin/doctor-schedules" value="View Doctor Schedules" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-            <br/>
-            <p:link outcome="/receptionist/patients" value="Manage Patients" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-            <br/>
-            <p:link outcome="/admin/patients" value="View Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-            <br/>
-            <p:link outcome="/patient/profile" value="My Profile" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-            <br/>
-            <p:link outcome="/doctor/profile" value="My Doctor Profile" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-            <br/>
-            <p:link outcome="/doctor/schedule" value="My Availability" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-        </p:panel>
-    </h:form>
-</h:body>
+                <br/><br/>
+                <p:link outcome="/admin/staff-list" value="Manage Staff" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                <br/>
+                <p:link outcome="/admin/doctor-schedules" value="View Doctor Schedules" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                <br/>
+                <p:link outcome="/receptionist/patients" value="Manage Patients" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                <br/>
+                <p:link outcome="/admin/patients" value="View Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                <br/>
+                <p:link outcome="/patient/profile" value="My Profile" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                <br/>
+                <p:link outcome="/doctor/profile" value="My Doctor Profile" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                <br/>
+                <p:link outcome="/doctor/schedule" value="My Availability" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                <p:link outcome="/patient/appointments" value="My Appointments" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                <br/>
+                <p:link outcome="/doctor/appointments" value="My Appointments (List)" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                <br/>
+                <p:link outcome="/receptionist/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                <br/>
+                <p:link outcome="/admin/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+            </p:panel>
+        </h:form>
+    </h:body>
 </html>
