@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:viewParam name="appointmentId" value="#{consultationBean.appointmentId}"/>
+        <f:viewAction action="#{consultationBean.load()}"/>
+    </f:metadata>
+
+    <head>
+        <title>Consultation </title>
+    </head>
+
+    <h:body>
+
+        <h:panelGroup rendered ="#{consultationBean.accessDenied}">
+            <p:message showDetail="true"/>
+            <h:outputText value="You don's have access to this page"/>
+        </h:panelGroup>
+
+        <h:form id="consultForm" rendered="#{not consultationBean.accessDenied}">
+
+            <p:growl id="messages" showDetail="true"/>
+
+            <p:panel header="Appointment Detail">
+
+                <p:panelGrid columns="2">
+
+                    <p:outputLabel value="Patient"/>
+                    <h:outputText value="#{consultationBean.appointment.patient.name}"/>
+
+                    <p:outputLabel value="Doctor"/>
+                    <h:outputText value="#{consultationBean.appointment.doctor.name}"/>
+
+                    <p:outputLabel value="Date"/>
+                    <h:outputText value="#{consultationBean.appointment.appointmentDate}">
+                        <f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/>
+                    </h:outputText>
+
+                    <p:outputLabel value="Status"/>
+                    <h:outputText value="#{consultationBean.appointment.status}"/>
+
+                    <p:outputLabel value="Reason"/>
+                    <h:outputText value="#{consultationBean.appointment.reason}"/>
+
+                </p:panelGrid>
+            </p:panel>
+
+            <br/><br/>
+
+            <p:panel header="Consultation">
+
+                <p:panelGrid columns="2">
+
+                    <p:outputLabel for="symptoms" value="Symptoms"/>
+                    <p:inputTextarea id="symptoms" value="#{consultationBean.symptoms}" rows="3"  disabled="#{not consultationBean.canEdit}"/>
+
+                    <p:outputLabel for="diagnosis" value="Diagnosis"/>
+                    <p:inputTextarea id="diagnosis" value="#{consultationBean.diagnosis}" rows="3" disabled="#{not consultationBean.canEdit}"/>
+
+                    <p:outputLabel for="notes" value="Notes"/>
+                    <p:inputTextarea id="notes" value="#{consultationBean.notes}" rows="4" disabled="#{not consultationBean.canEdit}"/>
+
+                </p:panelGrid>
+
+                <br/>
+
+                <p:commandButton value="Save Consultation" action="#{consultationBean.save}" update="consultForm" rendered="#{consultationBean.canEdit}"/>
+                <h:outputText value="View only, only the treating doctor can edit this consultation." rendered="#{not consultationBean.canEdit}"/>
+
+            </p:panel>
+
+        </h:form>
+
+
+    </h:body>
+
+
+</html>

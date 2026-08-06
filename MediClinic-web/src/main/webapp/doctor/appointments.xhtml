@@ -29,6 +29,16 @@ and open the template in the editor.
                 <p:column headerText="Status"><h:outputText value="#{a.status}"/></p:column>
                 
                 <p:column headerText="Reason"><h:outputText value="#{a.reason}"/></p:column>
+                
+                <p:column headerText="Consultation">
+                    <p:link outcome="/consultation" value="Start Consultation" rendered="#{a.status == 'APPROVED'}">
+                        <f:param name="appointmentId" value="#{a.id}"/>
+                    </p:link>
+                    <p:link outcome="/consultation" value="View Consultation" rendered="#{a.status == 'COMPLETED'}">
+                        <f:param name="appointmentId" value="#{a.id}"/>
+                    </p:link>
+                </p:column>
+
             </p:dataTable>
         </p:panel>
     </h:form>

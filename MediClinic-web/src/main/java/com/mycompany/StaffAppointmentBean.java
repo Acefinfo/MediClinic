@@ -6,6 +6,7 @@
 package com.mycompany;
 
 import entity.Appointment;
+import entity.Consultation;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import service.AppointmentService;
 import service.AuthException;
+import service.ConsultationService;
 
 /**
  *
@@ -30,8 +32,15 @@ public class StaffAppointmentBean implements Serializable {
 
     private List<Appointment> appointments;
 
+    // Consultation popup state
+    private Appointment viewAppointment;
+    private Consultation viewConsultation;
+
     @EJB
     private AppointmentService appointmentService;
+    
+    @EJB
+    private ConsultationService consultationService;
 
     @ManagedProperty(value = "#{loggedInUser}")
     private LoggedInUser loggedInUser;
@@ -94,6 +103,16 @@ public class StaffAppointmentBean implements Serializable {
         }
     }
 
+//    
+//    public void viewConsultation(Appointment appointment) {
+//        viewAppointment = appointment;
+//        viewConsultation = consultationService.findConsultationForAppointment(appointment.getId());
+//    }
+    public void loadConsultation(Appointment appointment) {
+        viewAppointment = appointment;
+        viewConsultation = consultationService.findConsultationForAppointment(appointment.getId());
+    }
+
     /**
      * Display a JSF FacesMessage.
      * 
@@ -107,6 +126,14 @@ public class StaffAppointmentBean implements Serializable {
 
     public List<Appointment> getAppointments() {
         return appointments;
+    }
+
+    public Appointment getViewAppointment() {
+        return viewAppointment;
+    }
+
+    public Consultation getViewConsultation() {
+        return viewConsultation;
     }
 
     public void setLoggedInUser(LoggedInUser loggedInUser) {
