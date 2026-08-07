@@ -53,8 +53,8 @@ and open the template in the editor.
                 </p:dataTable>
             </p:panel>
         </h:form>
-
-        <p:dialog header="Consultation Details" widgetVar="consultDialog" modal="true" width="450">
+       
+        <p:dialog header="Consultation Details" widgetVar="consultDialog" modal="true" width="500">
             <h:form id="consultDialogForm">
                 <p:panelGrid columns="2" rendered="#{staffAppointmentBean.viewAppointment ne null}">
                     <p:outputLabel value="Patient"/>
@@ -80,6 +80,37 @@ and open the template in the editor.
 
                 <h:outputText value="No consultation record found for this appointment."
                               rendered="#{staffAppointmentBean.viewAppointment ne null and staffAppointmentBean.viewConsultation eq null}"/>
+
+                <br/><br/>
+
+                <h:panelGroup rendered="#{staffAppointmentBean.viewConsultation ne null}">
+                    <p:outputLabel value="Prescriptions" style="font-weight:bold"/>
+                    <p:dataTable var="rx" value="#{staffAppointmentBean.viewPrescriptions}" rowKey="#{rx.id}"
+                                 rendered="#{not empty staffAppointmentBean.viewPrescriptions}">
+                        
+                        <p:column headerText="Medicine">
+                            <h:outputText value="#{rx.medicineName}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Dosage">
+                            <h:outputText value="#{rx.dosage}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Frequency">
+                            <h:outputText value="#{rx.frequency}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Duration">
+                            <h:outputText value="#{rx.duration}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Instructions">
+                            <h:outputText value="#{rx.instructions}"/>
+                        </p:column>
+                        
+                    </p:dataTable>
+                    <h:outputText value="No prescriptions recorded yet." rendered="#{empty staffAppointmentBean.viewPrescriptions}"/>
+                </h:panelGroup>
             </h:form>
         </p:dialog>
 

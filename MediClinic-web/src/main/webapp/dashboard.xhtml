@@ -44,6 +44,8 @@ and open the template in the editor.
                 <p:link outcome="/receptionist/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
                 <br/>
                 <p:link outcome="/admin/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                <br/>
+                <p:link outcome="/patient/prescriptions" value="My Prescriptions" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
             </p:panel>
         </h:form>
     </h:body>

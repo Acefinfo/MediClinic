@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany;
 
 import entity.Appointment;
 import entity.Consultation;
+import entity.Prescription;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -19,6 +15,7 @@ import javax.faces.context.FacesContext;
 import service.AppointmentService;
 import service.AuthException;
 import service.ConsultationService;
+import service.PrescriptionService;
 
 /**
  *
@@ -35,12 +32,16 @@ public class StaffAppointmentBean implements Serializable {
     // Consultation popup state
     private Appointment viewAppointment;
     private Consultation viewConsultation;
+    private List<Prescription> viewPrescriptions;
 
     @EJB
     private AppointmentService appointmentService;
     
     @EJB
     private ConsultationService consultationService;
+    
+    @EJB
+    private PrescriptionService prescriptionService;
 
     @ManagedProperty(value = "#{loggedInUser}")
     private LoggedInUser loggedInUser;
@@ -103,14 +104,18 @@ public class StaffAppointmentBean implements Serializable {
         }
     }
 
-//    
-//    public void viewConsultation(Appointment appointment) {
-//        viewAppointment = appointment;
-//        viewConsultation = consultationService.findConsultationForAppointment(appointment.getId());
-//    }
+   /**
+     * Loads the consultation and prescription information for a completed
+     * appointment so it can be displayed in the view-only popup.
+     *
+     * @param appointment 
+    */
     public void loadConsultation(Appointment appointment) {
         viewAppointment = appointment;
         viewConsultation = consultationService.findConsultationForAppointment(appointment.getId());
+        viewPrescriptions = (viewConsultation != null)
+                ? prescriptionService.listForConsultation(viewConsultation.getId())
+                : null;
     }
 
     /**
@@ -134,6 +139,10 @@ public class StaffAppointmentBean implements Serializable {
 
     public Consultation getViewConsultation() {
         return viewConsultation;
+    }
+
+    public List<Prescription> getViewPrescriptions() {
+        return viewPrescriptions;
     }
 
     public void setLoggedInUser(LoggedInUser loggedInUser) {

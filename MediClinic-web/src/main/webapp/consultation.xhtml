@@ -12,18 +12,18 @@ and open the template in the editor.
 
     <f:metadata>
         <f:viewParam name="appointmentId" value="#{consultationBean.appointmentId}"/>
-        <f:viewAction action="#{consultationBean.load()}"/>
+        <f:viewAction action="#{consultationBean.load}"/>
     </f:metadata>
 
-    <head>
+    <h:head>
         <title>Consultation </title>
-    </head>
+    </h:head>
 
     <h:body>
 
         <h:panelGroup rendered ="#{consultationBean.accessDenied}">
-            <p:message showDetail="true"/>
-            <h:outputText value="You don's have access to this page"/>
+            <p:messages showDetail="true"/>
+            <h:outputText value="You don't have access to this page"/>
         </h:panelGroup>
 
         <h:form id="consultForm" rendered="#{not consultationBean.accessDenied}">
@@ -61,7 +61,7 @@ and open the template in the editor.
                 <p:panelGrid columns="2">
 
                     <p:outputLabel for="symptoms" value="Symptoms"/>
-                    <p:inputTextarea id="symptoms" value="#{consultationBean.symptoms}" rows="3"  disabled="#{not consultationBean.canEdit}"/>
+                    <p:inputTextarea id="symptoms" value="#{consultationBean.symptoms}" rows="3" disabled="#{not consultationBean.canEdit}"/>
 
                     <p:outputLabel for="diagnosis" value="Diagnosis"/>
                     <p:inputTextarea id="diagnosis" value="#{consultationBean.diagnosis}" rows="3" disabled="#{not consultationBean.canEdit}"/>
@@ -73,15 +73,76 @@ and open the template in the editor.
 
                 <br/>
 
-                <p:commandButton value="Save Consultation" action="#{consultationBean.save}" update="consultForm" rendered="#{consultationBean.canEdit}"/>
-                <h:outputText value="View only, only the treating doctor can edit this consultation." rendered="#{not consultationBean.canEdit}"/>
+                <p:commandButton value="Save Consultation" action="#{consultationBean.save}" update="consultForm prescriptionPanel" rendered="#{consultationBean.canEdit}"/>
+                <h:outputText value="View only — only the treating doctor can edit this consultation." rendered="#{not consultationBean.canEdit}"/>
 
             </p:panel>
 
+            <br/>
+
+            <h:panelGroup id="prescriptionPanel" layout="block">
+                <p:panel header="Prescriptions" rendered="#{consultationBean.consultation ne null}">
+
+                    <p:dataTable var="rx" value="#{consultationBean.prescriptions}" rowKey="#{rx.id}" rendered="#{not empty consultationBean.prescriptions}">
+
+                        <p:column headerText="Medicine">
+                            <h:outputText value="#{rx.medicineName}"/>
+                        </p:column>
+
+                        <p:column headerText="Dosage">
+                            <h:outputText value="#{rx.dosage}"/>
+                        </p:column>
+
+                        <p:column headerText="Frequency">
+                            <h:outputText value="#{rx.frequency}"/>
+                        </p:column>
+
+                        <p:column headerText="Duration">
+                            <h:outputText value="#{rx.duration}"/>
+                        </p:column>
+
+                        <p:column headerText="Instructions">
+                            <h:outputText value="#{rx.instructions}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <h:outputText value="No prescriptions recorded yet." rendered="#{empty consultationBean.prescriptions}"/>
+
+                    <br/><br/>
+                    <p:commandButton value="Add Prescription" icon="pi pi-plus"
+                                     oncomplete="PF('addRxDialog').show()" process="@this"
+                                     rendered="#{consultationBean.canEdit}"/>
+
+                </p:panel>
+            </h:panelGroup>
         </h:form>
 
+        <p:dialog header="Add Prescription" widgetVar="addRxDialog" modal="true">
+            <h:form id="rxForm">
+                <p:panelGrid columns="2">
 
+                    <p:outputLabel for="med" value="Medicine Name"/>
+                    <p:inputText id="med" value="#{consultationBean.newMedicineName}"/>
+
+                    <p:outputLabel for="dosage" value="Dosage"/>
+                    <p:inputText id="dosage" value="#{consultationBean.newDosage}"/>
+
+                    <p:outputLabel for="freq" value="Frequency"/>
+                    <p:inputText id="freq" value="#{consultationBean.newFrequency}"/>
+
+                    <p:outputLabel for="dur" value="Duration"/>
+                    <p:inputText id="dur" value="#{consultationBean.newDuration}"/>
+
+                    <p:outputLabel for="instr" value="Instructions"/>
+                    <p:inputTextarea id="instr" value="#{consultationBean.newInstructions}" rows="3"/>
+                </p:panelGrid>
+
+                <br/>
+                <p:commandButton value="Save" action="#{consultationBean.addPrescription}"
+                                 oncomplete="if (!args.validationFailed) PF('addRxDialog').hide();"
+                                 update=":consultForm:prescriptionPanel"/>
+            </h:form>
+        </p:dialog>
     </h:body>
-
-
 </html>

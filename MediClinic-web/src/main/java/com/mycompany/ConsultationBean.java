@@ -7,7 +7,9 @@ package com.mycompany;
 
 import entity.Appointment;
 import entity.Consultation;
+import entity.Prescription;
 import java.io.Serializable;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -16,6 +18,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import service.AuthException;
 import service.ConsultationService;
+import service.PrescriptionService;
 
 /**
  *
@@ -38,15 +41,25 @@ public class ConsultationBean implements Serializable {
     private boolean accessDenied;
     private boolean canEdit;
 
+    private List<Prescription> prescriptions;
+    private String newMedicineName;
+    private String newDosage;
+    private String newFrequency;
+    private String newDuration;
+    private String newInstructions;
+
     @EJB
     private ConsultationService consultationService;
+
+    @EJB
+    private PrescriptionService prescriptionService;
 
     @ManagedProperty(value = "#{loggedInUser}")
     private LoggedInUser loggedInUser;
 
     /**
-     * Loads appointment and consultation data.
-     * Determines weather the current user has permission to access and edit the consultation.
+     * Loads appointment and consultation data. Determines weather the current
+     * user has permission to access and edit the consultation.
      */
     public void load() {
         String role = loggedInUser.getRoleName();
@@ -63,6 +76,7 @@ public class ConsultationBean implements Serializable {
                 symptoms = consultation.getSymptoms();
                 diagnosis = consultation.getDiagnosis();
                 notes = consultation.getNotes();
+                loadPrescriptions();
             }
             canEdit = "DOCTOR".equals(role)
                     && appointment.getDoctor().getUser() != null
@@ -82,6 +96,7 @@ public class ConsultationBean implements Serializable {
         try {
             consultation = consultationService.saveConsultation(loggedInUser.getUser(), appointmentId, symptoms, diagnosis, notes);
             appointment = consultationService.findAppointment(appointmentId);
+            loadPrescriptions();
             addMessage(FacesMessage.SEVERITY_INFO, "Success", "Consultation saved.");
         } catch (AuthException e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Failed", e.getMessage());
@@ -89,10 +104,45 @@ public class ConsultationBean implements Serializable {
     }
 
     /**
-     * Utility method for displaying JSF methods 
+     * Retrieves all prescription associates with the consultation.
+     */
+    public void loadPrescriptions() {
+        if (consultation != null) {
+            prescriptions = prescriptionService.listForConsultation(consultation.getId());
+        }
+    }
+
+    /**
+     * Adds a new prescription associated with the consultation
+     * Clears the input feilds after successful save.
+     */
+    public void addPrescription() {
+        if (consultation == null) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Please save the consultation before adding a prescription.");
+            return;
+        }
+        
+        try {
+            prescriptionService.addPrescription(loggedInUser.getUser(), consultation.getId(), newMedicineName, newDosage, newFrequency, newDuration, newInstructions);
+            newMedicineName = null;
+            newDosage = null;
+            newFrequency = null;
+            newDuration = null;
+            newInstructions = null;
+            loadPrescriptions();
+            addMessage(FacesMessage.SEVERITY_INFO, "Success", "Prescription added.");
+        } catch (AuthException e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Failed", e.getMessage());
+        }
+
+    }
+
+    /**
+     * Utility method for displaying JSF methods
+     *
      * @param severity
      * @param summary
-     * @param detail 
+     * @param detail
      */
     private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
@@ -144,6 +194,50 @@ public class ConsultationBean implements Serializable {
 
     public boolean isCanEdit() {
         return canEdit;
+    }
+
+    public List<Prescription> getPrescriptions() {
+        return prescriptions;
+    }
+
+    public String getNewMedicineName() {
+        return newMedicineName;
+    }
+
+    public void setNewMedicineName(String newMedicineName) {
+        this.newMedicineName = newMedicineName;
+    }
+
+    public String getNewDosage() {
+        return newDosage;
+    }
+
+    public void setNewDosage(String newDosage) {
+        this.newDosage = newDosage;
+    }
+
+    public String getNewFrequency() {
+        return newFrequency;
+    }
+
+    public void setNewFrequency(String newFrequency) {
+        this.newFrequency = newFrequency;
+    }
+
+    public String getNewDuration() {
+        return newDuration;
+    }
+
+    public void setNewDuration(String newDuration) {
+        this.newDuration = newDuration;
+    }
+
+    public String getNewInstructions() {
+        return newInstructions;
+    }
+
+    public void setNewInstructions(String newInstructions) {
+        this.newInstructions = newInstructions;
     }
 
     public void setLoggedInUser(LoggedInUser loggedInUser) {
