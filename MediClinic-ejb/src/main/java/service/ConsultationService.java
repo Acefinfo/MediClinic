@@ -31,6 +31,8 @@ public class ConsultationService {
     private ConsultationDao consultationDao;
     @EJB
     private ActivityLogDao activityLogDao;
+    @EJB
+    private BillingService billingService;
     
     /**
      * Loads the appointment 
@@ -106,6 +108,8 @@ public class ConsultationService {
             appointment.setStatus(Status.COMPLETED);
             appointmentDao.update(appointment);
         }
+
+        billingService.generateInvoiceForConsultation(consultation);
 
         log(actor, isNew ? "START_CONSULTATION" : "UPDATE_CONSULTATION", "Consultation", consultation.getId(), "Consultation recorded for appointment #" + appointmentId);
 

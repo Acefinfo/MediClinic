@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head><title>My Billing</title></h:head>
+    <h:body>
+        <h:form id="myBillForm">
+            <p:growl id="messages" showDetail="true"/>
+
+            <p:panel header="My Invoices">
+                <p:dataTable var="i" value="#{patientBillingBean.myInvoices}" rowKey="#{i.id}">
+
+                    <p:column headerText="Invoice #">
+                        <h:outputText value="#{i.invoiceNumber}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Doctor">
+                        <h:outputText value="#{i.consultation.appointment.doctor.name}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Total">
+                        <h:outputText value="#{i.totalAmount}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Status">
+                        <h:outputText value="#{i.status}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Issued">
+                        <h:outputText value="#{i.issuedDate}"><f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/></h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Actions">
+                        <p:commandButton value="Pay Online" icon="pi pi-credit-card"
+                                         action="#{patientBillingBean.payOnline(i)}" update="myBillForm"
+                                         rendered="#{i.status == 'UNPAID' or i.status == 'PARTIALLY_PAID'}"/>
+                        <p:commandButton value="View Receipt" icon="pi pi-file"
+                                         actionListener="#{patientBillingBean.select(i)}"
+                                         oncomplete="PF('receiptDialog').show()" update=":receiptDialogForm" process="@this"
+                                         rendered="#{i.status == 'PAID'}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+
+        <p:dialog header="Receipt" widgetVar="receiptDialog" modal="true" width="450">
+            <h:form id="receiptDialogForm">
+                
+                <p:panelGrid columns="2" rendered="#{patientBillingBean.selectedInvoice ne null}">
+                    
+                    <p:outputLabel value="Invoice #"/>
+                    <h:outputText value="#{patientBillingBean.selectedInvoice.invoiceNumber}"/>
+                    
+                    <p:outputLabel value="Fee"/>
+                    <h:outputText value="#{patientBillingBean.selectedInvoice.consultationFee}"/>
+                    
+                    <p:outputLabel value="Tax"/>
+                    <h:outputText value="#{patientBillingBean.selectedInvoice.tax}"/>
+                    
+                    <p:outputLabel value="Total Paid"/>
+                    <h:outputText value="#{patientBillingBean.selectedInvoice.totalAmount}"/>
+                    
+                </p:panelGrid>
+                <p:dataTable var="pay" value="#{patientBillingBean.selectedPayments}" rowKey="#{pay.id}">
+                    
+                    <p:column headerText="Method">
+                        <h:outputText value="#{pay.paymentMethod}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Date">
+                        <h:outputText value="#{pay.paymentDate}"><f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="UTC"/></h:outputText>
+                    </p:column>
+                    
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>

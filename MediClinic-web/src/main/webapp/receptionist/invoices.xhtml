@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+
+<html  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+          
+    <h:head>
+        <title>Invoices</title>
+    </h:head>
+    
+    <h:body>
+        
+        <h:form id="invForm">
+            <p:growl id="messages" showDetail="true"/>
+            
+            <p:panel header="All invoices">
+                <p:dataTable var="i" value="#{billingBean.invoices}" rowKey="#{i.id}">
+                    
+                    <p:column headerText="Invoice">
+                        <h:outputText value="#{i.invoiceNumber}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Patient">
+                        <h:outputText value="#{i.consultation.appointment.patient.name}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Doctor">
+                        <h:outputText value="#{i.consultation.appointment.doctor.name}"/>
+                    </p:column>
+                    
+                    <p:column headerText="fee">
+                        <h:outputText value="#{i.consultationFee}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Tax">
+                        <h:outputText value="#{i.tax}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Total">
+                        <h:outputText value="#{i.totalAmount}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Status">
+                        <h:outputText value="#{i.status}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Issued">
+                        <h:outputText value="#{i.issuedDate}"><f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/></h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Actions">
+                        <p:commandButton value="Manage" icon="pi pi-cog"
+                                         actionListener="#{billingBean.select(i)}"
+                                         oncomplete="PF('invoiceDialog').show()" update=":invoiceDialogForm" process="@this"/>
+                    </p:column>
+                
+                </p:dataTable>
+                
+            </p:panel>
+            
+        </h:form>
+        
+        <p:dialog header="Manage Invoice" widgetVar="invoiceDialog" modal="true" width="550">
+            
+            <h:form id="invoiceDialogForm">
+                <p:messages showDetail="true"/>
+
+                <p:panelGrid columns="2" rendered="#{billingBean.selectedInvoice ne null}">
+                    <p:outputLabel value="Invoice #"/>
+                    <h:outputText value="#{billingBean.selectedInvoice.invoiceNumber}"/>
+
+                    <p:outputLabel value="Patient"/>
+                    <h:outputText value="#{billingBean.selectedInvoice.consultation.appointment.patient.name}"/>
+
+                    <p:outputLabel value="Status"/>
+                    <h:outputText value="#{billingBean.selectedInvoice.status}"/>
+
+                    <p:outputLabel value="Fee" rendered="#{billingBean.selectedInvoice.status == 'UNPAID' or billingBean.selectedInvoice.status == 'PARTIALLY_PAID'}"/>
+                    <p:inputNumber value="#{billingBean.editFee}" minValue="0" decimalPlaces="2"
+                                   rendered="#{billingBean.selectedInvoice.status == 'UNPAID' or billingBean.selectedInvoice.status == 'PARTIALLY_PAID'}"/>
+
+                    <p:outputLabel value="Total Amount"/>
+                    <h:outputText value="#{billingBean.selectedInvoice.totalAmount}"/>
+                </p:panelGrid>
+
+                <br/>
+
+                <p:commandButton value="Save Fee" icon="pi pi-save" action="#{billingBean.saveFee}"
+                                 update="invoiceDialogForm :invForm"
+                                 rendered="#{billingBean.selectedInvoice.status == 'UNPAID' or billingBean.selectedInvoice.status == 'PARTIALLY_PAID'}"/>
+
+                <p:commandButton value="Void Invoice" icon="pi pi-ban" action="#{billingBean.voidSelected}"
+                                 update="invoiceDialogForm :invForm"
+                                 rendered="#{billingBean.selectedInvoice.status == 'UNPAID'}"/>
+
+                <br/><br/>
+
+                
+                <h:panelGroup rendered="#{loggedInUser.roleName == 'RECEPTIONIST' and (billingBean.selectedInvoice.status == 'UNPAID' or billingBean.selectedInvoice.status == 'PARTIALLY_PAID')}">
+                    <p:outputLabel value="Transaction Ref (optional)"/>
+                    <p:inputText value="#{billingBean.cashTransactionRef}"/>
+                    <p:commandButton value="Record Cash Payment" icon="pi pi-money-bill" action="#{billingBean.payCash}" update="invoiceDialogForm :invForm"/>
+                </h:panelGroup>
+
+                <br/><br/>
+
+                <p:outputLabel value="Payment History" style="font-weight:bold"/>
+                
+                <p:dataTable var="pay" value="#{billingBean.selectedPayments}" rowKey="#{pay.id}" rendered="#{not empty billingBean.selectedPayments}">
+                    
+                    <p:column headerText="Method">
+                        <h:outputText value="#{pay.paymentMethod}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Amount">
+                        <h:outputText value="#{pay.amount}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Date">
+                        <h:outputText value="#{pay.paymentDate}"><f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="UTC"/></h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Ref">
+                        <h:outputText value="#{pay.transactionRef}"/>
+                    </p:column>
+                    
+                </p:dataTable>
+                
+                <h:outputText value="No payments recorded yet." rendered="#{empty billingBean.selectedPayments}"/>
+                
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>

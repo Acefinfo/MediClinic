@@ -5,6 +5,7 @@
  */
 package com.mycompany;
 
+import dao.PatientDao;
 import entity.Appointment;
 import entity.Consultation;
 import entity.Prescription;
@@ -17,6 +18,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import service.AuthException;
+import service.BillingService;
 import service.ConsultationService;
 import service.PrescriptionService;
 
@@ -53,6 +55,11 @@ public class ConsultationBean implements Serializable {
 
     @EJB
     private PrescriptionService prescriptionService;
+    
+    @EJB
+    private BillingService billingService;
+    @EJB
+    private PatientDao patientDao;
 
     @ManagedProperty(value = "#{loggedInUser}")
     private LoggedInUser loggedInUser;
@@ -63,14 +70,21 @@ public class ConsultationBean implements Serializable {
      */
     public void load() {
         String role = loggedInUser.getRoleName();
-        if ("PATIENT".equals(role)) {
-            accessDenied = true;
-            return;
-        }
 
         try {
             appointment = consultationService.findAppointment(appointmentId);
             consultation = consultationService.findConsultationForAppointment(appointmentId);
+
+            if ("PATIENT".equals(role)) {
+                entity.Patient patient = patientDao.findByUserId(loggedInUser.getUser().getId());
+                boolean ownsAppointment = patient != null && appointment.getPatient().getId().equals(patient.getId());
+                boolean unlocked = consultation != null && billingService.isConsultationUnlockedForPatient(consultation.getId());
+
+                if (!ownsAppointment || !unlocked) {
+                    accessDenied = true;
+                    return;
+                }
+            }
 
             if (consultation != null) {
                 symptoms = consultation.getSymptoms();
@@ -86,7 +100,7 @@ public class ConsultationBean implements Serializable {
             accessDenied = true;
             addMessage(FacesMessage.SEVERITY_ERROR, "Failed", e.getMessage());
         }
-
+        
     }
 
     /**

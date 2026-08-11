@@ -31,7 +31,7 @@ public class Invoice implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public enum Status {
-        UNPAID, PAID, PARTIALLY_PAID
+        UNPAID, PAID, PARTIALLY_PAID, VOID
     }
 
     @Id
@@ -61,7 +61,11 @@ public class Invoice implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "issued_date", nullable = false)
     private Date issuedDate = new Date();
-
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    private Date updatedAt;
+    
     public Long getId() {
         return id;
     }
@@ -125,4 +129,13 @@ public class Invoice implements Serializable {
     public void setIssuedDate(Date issuedDate) {
         this.issuedDate = issuedDate;
     }
+    
+    public Date getUpdatedAt(){
+        return updatedAt;
+    }
+    
+    public void setUpdatedAt(Date updatedAt){
+        this.updatedAt = updatedAt;
+    }
+    
 }

@@ -37,6 +37,7 @@ and open the template in the editor.
                 <p:link outcome="/doctor/profile" value="My Doctor Profile" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
                 <br/>
                 <p:link outcome="/doctor/schedule" value="My Availability" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                <br/>
                 <p:link outcome="/patient/appointments" value="My Appointments" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
                 <br/>
                 <p:link outcome="/doctor/appointments" value="My Appointments (List)" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
@@ -46,6 +47,12 @@ and open the template in the editor.
                 <p:link outcome="/admin/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
                 <br/>
                 <p:link outcome="/patient/prescriptions" value="My Prescriptions" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                <br/>
+                <p:link outcome="/receptionist/invoices" value="Manage Invoices" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                <br/>
+                <p:link outcome="/admin/invoices" value="Manage Invoices" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                <br/>
+                <p:link outcome="/patient/billing" value="My Billing" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
             </p:panel>
         </h:form>
     </h:body>

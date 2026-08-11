@@ -12,7 +12,31 @@ and open the template in the editor.
 <h:head><title>My Prescriptions</title></h:head>
 <h:body>
     <p:panel header="My Prescriptions">
-        <h:outputText value="Your prescriptions will be available here once payment for the related consultation is completed. This will be enabled as part of the Billing and Payments module." />
+        
+        <p:dataTable var="rx" value="#{patientPrescriptionsBean.prescriptions}" rowKey="#{rx.id}" rendered="#{not empty patientPrescriptionsBean.prescriptions}">
+            
+            <p:column headerText="Medicine">
+                <h:outputText value="#{rx.medicineName}"/>
+            </p:column>
+            
+            <p:column headerText="Dosage">
+                <h:outputText value="#{rx.dosage}"/>
+            </p:column>
+            
+            <p:column headerText="Frequency">
+                <h:outputText value="#{rx.frequency}"/>
+            </p:column>
+            <p:column headerText="Duration">
+                <h:outputText value="#{rx.duration}"/>
+            </p:column>
+            
+            <p:column headerText="Instructions">
+                <h:outputText value="#{rx.instructions}"/>
+            </p:column>
+            
+        </p:dataTable>
+        
+        <h:outputText value="No prescriptions available yet. Prescriptions appear here once the related invoice is paid." rendered="#{empty patientPrescriptionsBean.prescriptions}"/>
     </p:panel>
 </h:body>
 </html>
