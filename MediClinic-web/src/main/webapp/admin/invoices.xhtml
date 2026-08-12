@@ -59,8 +59,14 @@ and open the template in the editor.
                         <p:commandButton value="Manage" icon="pi pi-cog"
                                          actionListener="#{billingBean.select(i)}"
                                          oncomplete="PF('invoiceDialog').show()" update=":invoiceDialogForm" process="@this"/>
+                    
+                        <h:outputLink value="#{request.contextPath}/invoice/#{i.id}" style="margin-left:8px">
+                            <h:outputText value="Download PDF"/>
+                        </h:outputLink>
                     </p:column>
-                
+                    
+                    
+
                 </p:dataTable>
                 
             </p:panel>

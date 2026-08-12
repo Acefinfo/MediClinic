@@ -21,19 +21,19 @@ and open the template in the editor.
                     <p:column headerText="Invoice #">
                         <h:outputText value="#{i.invoiceNumber}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Doctor">
                         <h:outputText value="#{i.consultation.appointment.doctor.name}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Total">
                         <h:outputText value="#{i.totalAmount}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Status">
                         <h:outputText value="#{i.status}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Issued">
                         <h:outputText value="#{i.issuedDate}"><f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/></h:outputText>
                     </p:column>
@@ -46,6 +46,11 @@ and open the template in the editor.
                                          actionListener="#{patientBillingBean.select(i)}"
                                          oncomplete="PF('receiptDialog').show()" update=":receiptDialogForm" process="@this"
                                          rendered="#{i.status == 'PAID'}"/>
+
+                        <h:outputLink value="#{request.contextPath}/invoice/#{i.id}" style="margin-left: 8px" rendered="#{i.status == 'PAID'}">
+                            <h:outputText value="Download PDF"/>
+                        </h:outputLink>
+
                     </p:column>
                 </p:dataTable>
             </p:panel>
@@ -53,32 +58,32 @@ and open the template in the editor.
 
         <p:dialog header="Receipt" widgetVar="receiptDialog" modal="true" width="450">
             <h:form id="receiptDialogForm">
-                
+
                 <p:panelGrid columns="2" rendered="#{patientBillingBean.selectedInvoice ne null}">
-                    
+
                     <p:outputLabel value="Invoice #"/>
                     <h:outputText value="#{patientBillingBean.selectedInvoice.invoiceNumber}"/>
-                    
+
                     <p:outputLabel value="Fee"/>
                     <h:outputText value="#{patientBillingBean.selectedInvoice.consultationFee}"/>
-                    
+
                     <p:outputLabel value="Tax"/>
                     <h:outputText value="#{patientBillingBean.selectedInvoice.tax}"/>
-                    
+
                     <p:outputLabel value="Total Paid"/>
                     <h:outputText value="#{patientBillingBean.selectedInvoice.totalAmount}"/>
-                    
+
                 </p:panelGrid>
                 <p:dataTable var="pay" value="#{patientBillingBean.selectedPayments}" rowKey="#{pay.id}">
-                    
+
                     <p:column headerText="Method">
                         <h:outputText value="#{pay.paymentMethod}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Date">
                         <h:outputText value="#{pay.paymentDate}"><f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="UTC"/></h:outputText>
                     </p:column>
-                    
+
                 </p:dataTable>
             </h:form>
         </p:dialog>

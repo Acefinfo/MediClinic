@@ -7,36 +7,58 @@ and open the template in the editor.
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
 
 <h:head><title>My Prescriptions</title></h:head>
 <h:body>
     <p:panel header="My Prescriptions">
-        
-        <p:dataTable var="rx" value="#{patientPrescriptionsBean.prescriptions}" rowKey="#{rx.id}" rendered="#{not empty patientPrescriptionsBean.prescriptions}">
-            
-            <p:column headerText="Medicine">
-                <h:outputText value="#{rx.medicineName}"/>
-            </p:column>
-            
-            <p:column headerText="Dosage">
-                <h:outputText value="#{rx.dosage}"/>
-            </p:column>
-            
-            <p:column headerText="Frequency">
-                <h:outputText value="#{rx.frequency}"/>
-            </p:column>
-            <p:column headerText="Duration">
-                <h:outputText value="#{rx.duration}"/>
-            </p:column>
-            
-            <p:column headerText="Instructions">
-                <h:outputText value="#{rx.instructions}"/>
-            </p:column>
-            
-        </p:dataTable>
-        
-        <h:outputText value="No prescriptions available yet. Prescriptions appear here once the related invoice is paid." rendered="#{empty patientPrescriptionsBean.prescriptions}"/>
+
+        <ui:repeat var="g" value="#{patientPrescriptionsBean.groups}">
+            <p:panel style="margin-bottom:20px">
+                <f:facet name="header">
+                    <h:outputText value="Consultation - #{g.consultation.consultationDate}">
+                        <f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/>
+                    </h:outputText>
+                </f:facet>
+
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Doctor" style="font-weight:bold"/>
+                    <h:outputText value="#{g.consultation.appointment.doctor.name}"/>
+
+                    <p:outputLabel value="Symptoms" style="font-weight:bold"/>
+                    <h:outputText value="#{g.consultation.symptoms}"/>
+
+                    <p:outputLabel value="Diagnosis" style="font-weight:bold"/>
+                    <h:outputText value="#{g.consultation.diagnosis}"/>
+
+                    <p:outputLabel value="Notes" style="font-weight:bold"/>
+                    <h:outputText value="#{g.consultation.notes}"/>
+                </p:panelGrid>
+
+                <br/>
+                <p:outputLabel value="Prescriptions" style="font-weight:bold"/>
+                <p:dataTable var="rx" value="#{g.prescriptions}" rowKey="#{rx.id}"
+                             rendered="#{not empty g.prescriptions}">
+                    <p:column headerText="Medicine"><h:outputText value="#{rx.medicineName}"/></p:column>
+                    <p:column headerText="Dosage"><h:outputText value="#{rx.dosage}"/></p:column>
+                    <p:column headerText="Frequency"><h:outputText value="#{rx.frequency}"/></p:column>
+                    <p:column headerText="Duration"><h:outputText value="#{rx.duration}"/></p:column>
+                    <p:column headerText="Instructions"><h:outputText value="#{rx.instructions}"/></p:column>
+                </p:dataTable>
+                <h:outputText value="No prescriptions recorded for this consultation."
+                               rendered="#{empty g.prescriptions}"/>
+
+                <br/><br/>
+                <h:outputLink value="#{request.contextPath}/medicalrecord/#{g.consultation.id}">
+                    <h:outputText value="Download Consultation + Prescriptions (PDF)"/>
+                </h:outputLink>
+            </p:panel>
+        </ui:repeat>
+
+        <h:outputText value="No prescriptions available yet. They appear here once the related invoice is paid."
+                       rendered="#{empty patientPrescriptionsBean.groups}"/>
     </p:panel>
 </h:body>
 </html>

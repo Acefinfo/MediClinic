@@ -28,7 +28,7 @@ import service.BillingService;
 
 @ManagedBean(name = "patientBillingBean")
 @ViewScoped
-public class PatientBean implements Serializable{
+public class PatientBillingBean implements Serializable{
     
     private static final long serialVersionUID = 1L;
     
@@ -50,7 +50,8 @@ public class PatientBean implements Serializable{
     }
     
     public void loadMyInvoices(){
-        Patient patient = patientDao.findById(loggedInUser.getUser().getId());
+//        Patient patient = patientDao.findById(loggedInUser.getUser().getId());
+        Patient patient = patientDao.findByUserId(loggedInUser.getUser().getId());
         
         if (patient != null) {
             myInvoices = billingService.findInvoicesForPatient(patient.getId());
