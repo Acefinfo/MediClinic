@@ -6,11 +6,13 @@
 package dao;
 
 import entity.Patient;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -18,7 +20,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class PatientDao {
-    
+
     // EntityManager used to interact with the persistence context.
     @PersistenceContext(unitName = "um_mediclinicdb")
     private EntityManager em;
@@ -27,7 +29,7 @@ public class PatientDao {
      * Saves a new patient record to the database.
      *
      * @param patient
-     * @throws Exception 
+     * @throws Exception
      */
     public void create(Patient patient) throws Exception {
         em.persist(patient);
@@ -35,8 +37,9 @@ public class PatientDao {
 
     /**
      * Retrieves a patient by their unique id
+     *
      * @param id
-     * @return 
+     * @return
      */
     public Patient findById(Long id) {
         if (id == null) {
@@ -46,9 +49,10 @@ public class PatientDao {
     }
 
     /**
-     * Retrieves patient by their phone number. 
+     * Retrieves patient by their phone number.
+     *
      * @param phone
-     * @return 
+     * @return
      */
     public Patient findByPhone(String phone) {
         try {
@@ -59,22 +63,24 @@ public class PatientDao {
             return null;
         }
     }
-    
+
     /**
      * Searches patient by name, phone number or email
-     * @return 
+     *
+     * @return
      */
-    public List<Patient> findAll(){
+    public List<Patient> findAll() {
         return em.createQuery("SELECT p from Patient p ORDER BY p.name", Patient.class)
                 .getResultList();
     }
-    
+
     /**
      * Searches patient profile linked to to user id.
+     *
      * @param userId
-     * @return 
+     * @return
      */
-    public  Patient findByUserId(Long userId){
+    public Patient findByUserId(Long userId) {
         try {
             return em.createQuery("SELECT p FROM Patient p WHERE p.user.id = :userId", Patient.class)
                     .setParameter("userId", userId)
@@ -83,9 +89,11 @@ public class PatientDao {
             return null;
         }
     }
-    
+
     /**
-     * Searches patients by name, phone, or email (case-insensitive, partial match).
+     * Searches patients by name, phone, or email (case-insensitive, partial
+     * match).
+     *
      * @param keyword
      * @return
      */
@@ -97,13 +105,47 @@ public class PatientDao {
                 .setParameter("kw", like)
                 .getResultList();
     }
-    
+
     /**
-     * Updates an existing patient record. 
+     * Updates an existing patient record.
+     *
      * @param patient
-     * @return 
+     * @return
      */
-    public Patient update(Patient patient){
+    public Patient update(Patient patient) {
         return em.merge(patient);
+    }
+
+    /**
+     * Counts all the patients.
+     *
+     * @return
+     */
+    public long countAll() {
+        return em.createQuery("SELECT COUNT(p) FROM Patient p", Long.class)
+                .getSingleResult();
+    }
+
+    /**
+     * Counts patients grouped by gender.
+     *
+     * @return
+     */
+    public List<Object[]> countGroupedByGender() {
+        return em.createQuery("SELECT p.gender, COUNT(p) FROM Patient p GROUP BY p.gender", Object[].class)
+                .getResultList();
+    }
+
+    /**
+     * FInds the registration date of patients registered from specified start
+     * date.
+     *
+     * @param start
+     * @return
+     */
+    public List<Date> findRegistrationDatesSince(Date start) {
+        return em.createQuery("SELECT p.user.createdAt FROM Patient p WHERE p.user.createdAt >= :start", Date.class)
+                .setParameter("start", start, TemporalType.TIMESTAMP)
+                .getResultList();
     }
 }

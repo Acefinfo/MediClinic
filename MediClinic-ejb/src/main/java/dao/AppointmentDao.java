@@ -14,6 +14,7 @@ import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -28,6 +29,7 @@ public class AppointmentDao {
 
     /**
      * Saves a new appointment to the database.
+     *
      * @param appointment
      */
     public void create(Appointment appointment) {
@@ -36,6 +38,7 @@ public class AppointmentDao {
 
     /**
      * Updates an existing appointment.
+     *
      * @param appointment
      * @return
      */
@@ -45,6 +48,7 @@ public class AppointmentDao {
 
     /**
      * Finds an appointment by its primary key.
+     *
      * @param id
      * @return
      */
@@ -57,6 +61,7 @@ public class AppointmentDao {
 
     /**
      * Retrieves all appointments belonging to a specific patient.
+     *
      * @param patientId
      * @return
      */
@@ -69,6 +74,7 @@ public class AppointmentDao {
 
     /**
      * Retrieves all appointments belonging to a specific doctor.
+     *
      * @param doctorId
      * @return
      */
@@ -81,6 +87,7 @@ public class AppointmentDao {
 
     /**
      * Retrieves every appointment in the system (Admin/Receptionist view).
+     *
      * @return
      */
     public List<Appointment> findAll() {
@@ -91,7 +98,9 @@ public class AppointmentDao {
     }
 
     /**
-     * Retrieves all appointments with a specific status (e.g. the approval queue).
+     * Retrieves all appointments with a specific status (e.g. the approval
+     * queue).
+     *
      * @param status
      * @return
      */
@@ -105,7 +114,9 @@ public class AppointmentDao {
 
     /**
      * Counts active (non-cancelled, non-completed) bookings against a specific
-     * availability slot on a given date. Used to enforce the slot's max-patients capacity.
+     * availability slot on a given date. Used to enforce the slot's
+     * max-patients capacity.
+     *
      * @param scheduleId
      * @param appointmentDate
      * @return
@@ -120,4 +131,94 @@ public class AppointmentDao {
                 .setParameter("statuses", activeStatuses)
                 .getSingleResult();
     }
+
+    /**
+     * Counts appoints currently in a given status.
+     *
+     * @param status
+     * @return
+     */
+    public long countByStatus(Status status) {
+        return em.createQuery("SELECT COUNT(a) FROM Appointment a WHERE a.status = :status", Long.class)
+                .setParameter("status", status)
+                .getSingleResult();
+    }
+
+    /**
+     * All appointment on one calender date.
+     *
+     * @param date
+     * @return
+     */
+    public List<Appointment> findByDate(Date date) {
+        return em.createQuery("SELECT a FROM Appointment a WHERE a.appointmentDate = :date ORDER BY a.appointmentTime", Appointment.class)
+                .setParameter("date", date, TemporalType.DATE)
+                .getResultList();
+    }
+
+    /**
+     * Counts a doctor's still upcoming (approved/ rescheduled) appointment from
+     * given date onwards.
+     *
+     * @param doctorId
+     * @param fromDate
+     * @return
+     */
+    public long countUpcomingByDoctor(Long doctorId, Date fromDate) {
+        List<Status> activeStatuses = Arrays.asList(Status.APPROVED, Status.RESCHEDULED);
+        return em.createQuery(
+                "SELECT COUNT(a) FROM Appointment a WHERE a.doctor.id = :doctorId AND a.appointmentDate >= :fromDate AND a.status IN :statuses", Long.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("fromDate", fromDate, TemporalType.DATE)
+                .setParameter("statuses", activeStatuses)
+                .getSingleResult();
+    }
+
+    /**
+     * Counts a patients still upcoming appointment from given date.
+     *
+     * @param patientId
+     * @param fromDate
+     * @return
+     */
+    public long countUpcomingByPatient(Long patientId, Date fromDate) {
+        List<Status> activeStatuses = Arrays.asList(Status.APPROVED, Status.RESCHEDULED);
+        return em.createQuery(
+                "SELECT COUNT(a) FROM Appointment a WHERE a.patient.id = :patientId AND a.appointmentDate >= :fromDate AND a.status IN :statuses", Long.class)
+                .setParameter("patientId", patientId)
+                .setParameter("fromDate", fromDate, TemporalType.DATE)
+                .setParameter("statuses", activeStatuses)
+                .getSingleResult();
+    }
+
+    /**
+     * Completed appointment count per doctor for the doctor performance report.
+     * Each row is doctor and count
+     *
+     * @return
+     */
+    public List<Object[]> countCompletedGroupedByDoctor() {
+        return em.createQuery(
+                "SELECT a.doctor, COUNT(a) FROM Appointment a WHERE a.status = :status GROUP BY a.doctor",
+                Object[].class)
+                .setParameter("status", Status.COMPLETED)
+                .getResultList();
+    }
+    
+    /**
+     * A single doctor's appointments on one calender date
+     * 
+     * @param doctorId
+     * @param date
+     * @return 
+     */
+    public List<Appointment> findByDoctorIdAndDate(Long doctorId, Date date) {
+    return em.createQuery(
+            "SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :date ORDER BY a.appointmentTime",
+            Appointment.class)
+            .setParameter("doctorId", doctorId)
+            .setParameter("date", date, TemporalType.DATE)
+            .getResultList();
+}
+
 }

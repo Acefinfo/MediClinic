@@ -89,5 +89,11 @@ public class ConsultationDao {
                 .getResultList();
     }
     
+    public long countByDoctorId(Long doctorId) {
+        return em.createQuery( "SELECT COUNT(c) FROM Consultation c WHERE c.appointment.doctor.id = :doctorId", Long.class)
+                .setParameter("doctorId", doctorId)
+                .getSingleResult();
+    }
+
 }
 
