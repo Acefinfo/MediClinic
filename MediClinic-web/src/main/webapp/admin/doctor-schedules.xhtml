@@ -4,52 +4,57 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/template.xhtml">
 
-<h:head><title>Doctor Schedules</title></h:head>
-<h:body>
-    <h:form id="doctorsForm">
-        <p:panel header="All Doctors">
+    <ui:define name="title">Doctor Schedules</ui:define>
+
+    <ui:define name="content">
+        <h1 class="mc-page-title">Doctor Schedules</h1>
+
+        <h:form id="doctorsForm">
+            <p:panel header="All Doctors">
             
-            <p:dataTable var="d" value="#{adminDoctorBean.doctors}" rowKey="#{d.id}">
-                <p:column headerText="Name"><h:outputText value="#{d.name}"/></p:column>
-                <p:column headerText="Specialization"><h:outputText value="#{d.specialization}"/></p:column>
-                <p:column headerText="Fee"><h:outputText value="#{d.fee}"/></p:column>
-                <p:column headerText="Phone"><h:outputText value="#{d.phone}"/></p:column>
-            </p:dataTable>
+                <p:dataTable var="d" value="#{adminDoctorBean.doctors}" rowKey="#{d.id}">
+                    <p:column headerText="Name"><h:outputText value="#{d.name}"/></p:column>
+                    <p:column headerText="Specialization"><h:outputText value="#{d.specialization}"/></p:column>
+                    <p:column headerText="Fee"><h:outputText value="#{d.fee}"/></p:column>
+                    <p:column headerText="Phone"><h:outputText value="#{d.phone}"/></p:column>
+                </p:dataTable>
+                
+            </p:panel>
             
-        </p:panel>
-        
-    </h:form>
+        </h:form>
 
-    <br/>
+        <br/>
 
-    <h:form id="schedulesForm">
-        <p:panel header="All Availability Slots">
-            <p:dataTable var="s" value="#{adminDoctorBean.schedules}" rowKey="#{s.id}">
-                
-                <p:column headerText="Doctor"><h:outputText value="#{s.doctor.name}"/></p:column>
-                <p:column headerText="Day"><h:outputText value="#{s.dayOfWeek}"/></p:column>
-                
-                <p:column headerText="Start">
-                    <h:outputText value="#{s.startTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
-                </p:column>
-               
-                <p:column headerText="End">
-                    <h:outputText value="#{s.endTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
-                </p:column>
-                
-                <p:column headerText="Max Patients"><h:outputText value="#{s.maxPatients}"/></p:column>
+        <h:form id="schedulesForm">
+            <p:panel header="All Availability Slots">
+                <p:dataTable var="s" value="#{adminDoctorBean.schedules}" rowKey="#{s.id}">
+
+                    <p:column headerText="Doctor"><h:outputText value="#{s.doctor.name}"/></p:column>
+                    <p:column headerText="Day"><h:outputText value="#{s.dayOfWeek}"/></p:column>
+
+                    <p:column headerText="Start">
+                        <h:outputText value="#{s.startTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
+                    </p:column>
+
+                    <p:column headerText="End">
+                        <h:outputText value="#{s.endTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Max Patients"><h:outputText value="#{s.maxPatients}"/></p:column>
+
+                </p:dataTable>
+            </p:panel>
             
-            </p:dataTable>
-        </p:panel>
-        
-    </h:form>
-    
-</h:body>
+        </h:form>
+    </ui:define>
 
-</html>
+</ui:composition>

@@ -5,104 +5,109 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/template.xhtml">
 
-<h:head><title>My Appointments</title></h:head>
-<h:body>
-    <h:form id="bookForm">
-        <p:growl id="messages" showDetail="true"/>
+    <ui:define name="title">My Appointments</ui:define>
 
-        <p:panel header="Book an Appointment">
-            <p:panelGrid id="bookGrid" columns="2">
-                
-                <p:outputLabel for="doctor" value="Doctor"/>
-                <p:selectOneMenu id="doctor" value="#{patientAppointmentBean.selectedDoctorId}">
-                    <f:selectItem itemLabel="-- Select a Doctor --" itemValue="#{null}" noSelectionOption="true"/>
-                    <f:selectItems value="#{patientAppointmentBean.doctors}" var="d" itemLabel="#{d.name} (#{d.specialization})" itemValue="#{d.id}"/>
-                    <p:ajax listener="#{patientAppointmentBean.onDoctorChange}" update="bookGrid"/>
-                </p:selectOneMenu>
+    <ui:define name="content">
+        <h1 class="mc-page-title">My Appointments</h1>
 
-                <p:outputLabel for="schedule" value="Available Slot"/>
-                <p:selectOneMenu id="schedule" value="#{patientAppointmentBean.selectedScheduleId}">
-                    <f:selectItem itemLabel="-- Select a Slot --" itemValue="#{null}" noSelectionOption="true"/>
-                    <f:selectItems value="#{patientAppointmentBean.scheduleItems}"/>
-                </p:selectOneMenu>
+        <h:form id="bookForm">
+            <p:growl id="messages" showDetail="true"/>
 
-                <p:outputLabel for="date" value="Date"/>
-                <p:calendar id="date" value="#{patientAppointmentBean.appointmentDate}" pattern="yyyy-MM-dd" navigator="true"/>
+            <p:panel header="Book an Appointment">
+                <p:panelGrid id="bookGrid" columns="2">
 
-                <p:outputLabel for="time" value="Time"/>
-                <p:calendar id="time" value="#{patientAppointmentBean.appointmentTime}" timeOnly="true" pattern="HH:mm"/>
+                    <p:outputLabel for="doctor" value="Doctor"/>
+                    <p:selectOneMenu id="doctor" value="#{patientAppointmentBean.selectedDoctorId}">
+                        <f:selectItem itemLabel="-- Select a Doctor --" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{patientAppointmentBean.doctors}" var="d" itemLabel="#{d.name} (#{d.specialization})" itemValue="#{d.id}"/>
+                        <p:ajax listener="#{patientAppointmentBean.onDoctorChange}" update="bookGrid"/>
+                    </p:selectOneMenu>
 
-                <p:outputLabel for="reason" value="Reason"/>
-                <p:inputTextarea id="reason" value="#{patientAppointmentBean.reason}" rows="3"/>
-            </p:panelGrid>
+                    <p:outputLabel for="schedule" value="Available Slot"/>
+                    <p:selectOneMenu id="schedule" value="#{patientAppointmentBean.selectedScheduleId}">
+                        <f:selectItem itemLabel="-- Select a Slot --" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{patientAppointmentBean.scheduleItems}"/>
+                    </p:selectOneMenu>
 
-            <br/>
-            <p:commandButton value="Book Appointment" action="#{patientAppointmentBean.book}" update="bookForm listForm"/>
-        </p:panel>
-    </h:form>
+                    <p:outputLabel for="date" value="Date"/>
+                    <p:calendar id="date" value="#{patientAppointmentBean.appointmentDate}" pattern="yyyy-MM-dd" navigator="true"/>
 
-    <br/>
+                    <p:outputLabel for="time" value="Time"/>
+                    <p:calendar id="time" value="#{patientAppointmentBean.appointmentTime}" timeOnly="true" pattern="HH:mm"/>
 
-    <h:form id="listForm">
-        <p:panel header="My Appointments">
-            
-            <p:dataTable var="a" value="#{patientAppointmentBean.myAppointments}" rowKey="#{a.id}">
-                <p:column headerText="Doctor"><h:outputText value="#{a.doctor.name}"/></p:column>
-                
-                <p:column headerText="Date">
-                    <h:outputText value="#{a.appointmentDate}"><f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/></h:outputText>
-                </p:column>
-                
-                <p:column headerText="Time">
-                    <h:outputText value="#{a.appointmentTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
-                </p:column>
-                
-                <p:column headerText="Status"><h:outputText value="#{a.status}"/></p:column>
-                
-                <p:column headerText="Reason"><h:outputText value="#{a.reason}"/></p:column>
-                
-                <p:column headerText="Actions">
-                    <p:commandButton value="Cancel" icon="pi pi-times"
-                                      action="#{patientAppointmentBean.cancel(a)}" update="listForm"
-                                      rendered="#{a.status == 'REQUESTED' or a.status == 'APPROVED'}"/>
-                    <p:commandButton value="Reschedule" icon="pi pi-calendar"
-                                      actionListener="#{patientAppointmentBean.startReschedule(a)}"
-                                      oncomplete="PF('reschedDialog').show()" update=":reschedForm" process="@this"
-                                      rendered="#{a.status == 'REQUESTED' or a.status == 'APPROVED'}"/>
-                </p:column>
-                
-            </p:dataTable>
-            
-            
-        </p:panel>
-        
-    </h:form>
+                    <p:outputLabel for="reason" value="Reason"/>
+                    <p:inputTextarea id="reason" value="#{patientAppointmentBean.reason}" rows="3"/>
+                </p:panelGrid>
 
-    <p:dialog header="Reschedule Appointment" widgetVar="reschedDialog" modal="true">
-        <h:form id="reschedForm">
-            <p:panelGrid columns="2">
-                
-                <p:outputLabel for="rSchedule" value="Available Slot"/>
-                <p:selectOneMenu id="rSchedule" value="#{patientAppointmentBean.rescheduleScheduleId}">
-                    <f:selectItems value="#{patientAppointmentBean.reschedScheduleItems}"/>
-                </p:selectOneMenu>
-
-                <p:outputLabel for="rDate" value="New Date"/>
-                <p:calendar id="rDate" value="#{patientAppointmentBean.rescheduleDate}" pattern="yyyy-MM-dd" navigator="true"/>
-
-                <p:outputLabel for="rTime" value="New Time"/>
-                <p:calendar id="rTime" value="#{patientAppointmentBean.rescheduleTime}" timeOnly="true" pattern="HH:mm"/>
-            </p:panelGrid>
-
-            <br/>
-            
-            <p:commandButton value="Save" action="#{patientAppointmentBean.saveReschedule}" oncomplete="PF('reschedDialog').hide()" update=":listForm"/>
+                <br/>
+                <p:commandButton value="Book Appointment" action="#{patientAppointmentBean.book}" update="bookForm listForm"/>
+            </p:panel>
         </h:form>
-    </p:dialog>
-</h:body>
-</html>
+
+        <br/>
+
+        <h:form id="listForm">
+            <p:panel header="My Appointments">
+
+                <p:dataTable var="a" value="#{patientAppointmentBean.myAppointments}" rowKey="#{a.id}">
+                    <p:column headerText="Doctor"><h:outputText value="#{a.doctor.name}"/></p:column>
+
+                    <p:column headerText="Date">
+                        <h:outputText value="#{a.appointmentDate}"><f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/></h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Time">
+                        <h:outputText value="#{a.appointmentTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Status"><h:outputText value="#{a.status}"/></p:column>
+
+                    <p:column headerText="Reason"><h:outputText value="#{a.reason}"/></p:column>
+
+                    <p:column headerText="Actions">
+                        <p:commandButton value="Cancel" icon="pi pi-times"
+                                          action="#{patientAppointmentBean.cancel(a)}" update="listForm"
+                                          rendered="#{a.status == 'REQUESTED' or a.status == 'APPROVED'}"/>
+                        <p:commandButton value="Reschedule" icon="pi pi-calendar"
+                                          actionListener="#{patientAppointmentBean.startReschedule(a)}"
+                                          oncomplete="PF('reschedDialog').show()" update=":reschedForm" process="@this"
+                                          rendered="#{a.status == 'REQUESTED' or a.status == 'APPROVED'}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </h:form>
+
+        <p:dialog header="Reschedule Appointment" widgetVar="reschedDialog" modal="true">
+            <h:form id="reschedForm">
+                <p:panelGrid columns="2">
+
+                    <p:outputLabel for="rSchedule" value="Available Slot"/>
+                    <p:selectOneMenu id="rSchedule" value="#{patientAppointmentBean.rescheduleScheduleId}">
+                        <f:selectItems value="#{patientAppointmentBean.reschedScheduleItems}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="rDate" value="New Date"/>
+                    <p:calendar id="rDate" value="#{patientAppointmentBean.rescheduleDate}" pattern="yyyy-MM-dd" navigator="true"/>
+
+                    <p:outputLabel for="rTime" value="New Time"/>
+                    <p:calendar id="rTime" value="#{patientAppointmentBean.rescheduleTime}" timeOnly="true" pattern="HH:mm"/>
+                </p:panelGrid>
+
+                <br/>
+
+                <p:commandButton value="Save" action="#{patientAppointmentBean.saveReschedule}" oncomplete="PF('reschedDialog').hide()" update=":listForm"/>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

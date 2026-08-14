@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/template.xhtml">
+
+    <ui:define name="title">Access Denied</ui:define>
+
+    <ui:define name="content">
+        <div class="mc-center-wrap">
+            <div class="mc-card" style="max-width:480px; text-align:center;">
+                <div style="font-size:4em; font-weight:700; color:#d97706; line-height:1;">403</div>
+                <h1 class="mc-page-title" style="margin-top:12px;">Access Denied</h1>
+                <p class="mc-muted">
+                    You don't have permission to view this page with your current account role.
+                </p>
+                <br/>
+                <p:link outcome="/dashboard" value="Back to Dashboard"/>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

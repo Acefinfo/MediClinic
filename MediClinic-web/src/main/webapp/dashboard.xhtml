@@ -5,128 +5,123 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/template.xhtml">
 
-    <h:head><title>Dashboard</title></h:head>
-    <h:body>
+    <ui:define name="title">Dashboard</ui:define>
+
+    <ui:define name="content">
         <h:form id="dashboardForm">
-            <p:panel header="Dashboard">
-                <p:graphicImage value="/photo/#{loggedInUser.user.id}" cache="false" width="80"
-                                rendered="#{loggedInUser.user.photoPath ne null}"/>
-                <br/>
-                <h:outputText value="Welcome, #{loggedInUser.user.email} (#{loggedInUser.roleName})"/>
-                <br/><br/>
-                <p:commandButton value="Logout" action="#{loggedInUser.logout}" ajax="false"/>
-                <br/><br/>
 
-                <!-- ===== Admin / Receptionist widgets ===== -->
-                <p:panelGrid columns="4" layout="grid" columnClasses="ui-g-3,ui-g-3,ui-g-3,ui-g-3"
-                             rendered="#{loggedInUser.roleName == 'ADMIN' or loggedInUser.roleName == 'RECEPTIONIST'}">
-                    <p:panel header="Today's Appointments">
-                        <h:outputText value="#{dashboardBean.todayAppointments}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                    <p:panel header="Pending Approvals">
-                        <h:outputText value="#{dashboardBean.pendingApprovals}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                    <p:panel header="Unpaid Invoices">
-                        <h:outputText value="#{dashboardBean.unpaidInvoices}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                    <p:panel header="Revenue This Month">
-                        <h:outputText value="#{dashboardBean.revenueThisMonth}" style="font-size:1.8em;font-weight:bold;">
-                            <f:convertNumber type="currency" currencySymbol="$"/>
-                        </h:outputText>
-                    </p:panel>
-                    <p:panel header="Total Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}">
-                        <h:outputText value="#{dashboardBean.totalPatients}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                    <p:panel header="Total Doctors" rendered="#{loggedInUser.roleName == 'ADMIN'}">
-                        <h:outputText value="#{dashboardBean.totalDoctors}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                    <p:panel header="Total Revenue (All Time)" rendered="#{loggedInUser.roleName == 'ADMIN'}">
-                        <h:outputText value="#{dashboardBean.totalRevenue}" style="font-size:1.8em;font-weight:bold;">
-                            <f:convertNumber type="currency" currencySymbol="$"/>
-                        </h:outputText>
-                    </p:panel>
-                </p:panelGrid>
+            <div class="mc-section" style="display:flex; align-items:center; gap:16px;">
+                <p:graphicImage value="/photo/#{loggedInUser.user.id}" cache="false" width="64"
+                                rendered="#{loggedInUser.user.photoPath ne null}"
+                                style="border-radius:50%; border:2px solid #0d9488;"/>
+                <div>
+                    <h1 class="mc-page-title" style="margin-bottom:2px;">
+                        Welcome, #{loggedInUser.user.email}
+                    </h1>
+                    <span class="mc-muted">Role: #{loggedInUser.roleName}</span>
+                </div>
+            </div>
 
-                <p:panel header="Recent Activity" toggleable="true"
+            <!-- ===== Admin / Receptionist widgets ===== -->
+            <p:panelGrid columns="4" layout="grid" columnClasses="ui-g-3,ui-g-3,ui-g-3,ui-g-3"
                          rendered="#{loggedInUser.roleName == 'ADMIN' or loggedInUser.roleName == 'RECEPTIONIST'}">
-                    <p:dataTable value="#{dashboardBean.recentActivity}" var="log" rows="8">
-                        <p:column headerText="When"><h:outputText value="#{log.timestamp}"><f:convertDateTime pattern="dd MMM yyyy HH:mm"/></h:outputText></p:column>
-                        <p:column headerText="Action"><h:outputText value="#{log.action}"/></p:column>
-                        <p:column headerText="Details"><h:outputText value="#{log.details}"/></p:column>
-                    </p:dataTable>
+                <p:panel header="Today's Appointments">
+                    <h:outputText value="#{dashboardBean.todayAppointments}" styleClass="mc-stat-value"/>
                 </p:panel>
-
-                <!-- ===== Doctor widgets ===== -->
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-6,ui-g-6"
-                             rendered="#{loggedInUser.roleName == 'DOCTOR'}">
-                    <p:panel header="Upcoming Appointments">
-                        <h:outputText value="#{dashboardBean.myUpcomingAppointments}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                    <p:panel header="Completed Consultations">
-                        <h:outputText value="#{dashboardBean.myCompletedConsultations}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                </p:panelGrid>
-                <p:panel header="Today's Appointments" rendered="#{loggedInUser.roleName == 'DOCTOR'}">
-                    <p:dataTable value="#{dashboardBean.myTodaysAppointments}" var="appt" rows="10">
-                        <p:column headerText="Time"><h:outputText value="#{appt.appointmentTime}"><f:convertDateTime pattern="HH:mm" type="time"/></h:outputText></p:column>
-                        <p:column headerText="Patient"><h:outputText value="#{appt.patient.name}"/></p:column>
-                        <p:column headerText="Status"><h:outputText value="#{appt.status}"/></p:column>
-                    </p:dataTable>
+                <p:panel header="Pending Approvals">
+                    <h:outputText value="#{dashboardBean.pendingApprovals}" styleClass="mc-stat-value"/>
                 </p:panel>
+                <p:panel header="Unpaid Invoices">
+                    <h:outputText value="#{dashboardBean.unpaidInvoices}" styleClass="mc-stat-value"/>
+                </p:panel>
+                <p:panel header="Revenue This Month">
+                    <h:outputText value="#{dashboardBean.revenueThisMonth}" styleClass="mc-stat-value">
+                        <f:convertNumber type="currency" currencySymbol="Rs. "/>
+                    </h:outputText>
+                </p:panel>
+                <p:panel header="Total Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}">
+                    <h:outputText value="#{dashboardBean.totalPatients}" styleClass="mc-stat-value"/>
+                </p:panel>
+                <p:panel header="Total Doctors" rendered="#{loggedInUser.roleName == 'ADMIN'}">
+                    <h:outputText value="#{dashboardBean.totalDoctors}" styleClass="mc-stat-value"/>
+                </p:panel>
+                <p:panel header="Total Revenue (All Time)" rendered="#{loggedInUser.roleName == 'ADMIN'}">
+                    <h:outputText value="#{dashboardBean.totalRevenue}" styleClass="mc-stat-value">
+                        <f:convertNumber type="currency" currencySymbol="Rs. "/>
+                    </h:outputText>
+                </p:panel>
+            </p:panelGrid>
 
-                <!-- ===== Patient widgets ===== -->
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-6,ui-g-6"
-                             rendered="#{loggedInUser.roleName == 'PATIENT'}">
-                    <p:panel header="Upcoming Appointments">
-                        <h:outputText value="#{dashboardBean.myUpcomingAppointmentsAsPatient}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                    <p:panel header="Unpaid Invoices">
-                        <h:outputText value="#{dashboardBean.myUnpaidInvoices}" style="font-size:1.8em;font-weight:bold;"/>
-                    </p:panel>
-                </p:panelGrid>
-
-                <br/><br/>
-
-                <!-- ===== existing nav links (unchanged) ===== -->
-                <p:link outcome="/profile-photo" value="Update Profile Photo"/>
-                <br/><br/>
-                <p:link outcome="/admin/staff-list" value="Manage Staff" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                <br/>
-                <p:link outcome="/admin/doctor-schedules" value="View Doctor Schedules" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                <br/>
-                <p:link outcome="/admin/reports" value="Reports" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                <br/>
-                <p:link outcome="/receptionist/patients" value="Manage Patients" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-                <br/>
-                <p:link outcome="/admin/patients" value="View Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                <br/>
-                <p:link outcome="/patient/profile" value="My Profile" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                <br/>
-                <p:link outcome="/doctor/profile" value="My Doctor Profile" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-                <br/>
-                <p:link outcome="/doctor/schedule" value="My Availability" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-                <br/>
-                <p:link outcome="/patient/appointments" value="My Appointments" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                <br/>
-                <p:link outcome="/doctor/appointments" value="My Appointments (List)" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-                <br/>
-                <p:link outcome="/receptionist/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-                <br/>
-                <p:link outcome="/admin/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                <br/>
-                <p:link outcome="/patient/prescriptions" value="My Prescriptions" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                <br/>
-                <p:link outcome="/receptionist/invoices" value="Manage Invoices" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-                <br/>
-                <p:link outcome="/admin/invoices" value="Manage Invoices" rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                <br/>
-                <p:link outcome="/patient/billing" value="My Billing" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+            <p:panel header="Recent Activity" toggleable="true"
+                     rendered="#{loggedInUser.roleName == 'ADMIN' or loggedInUser.roleName == 'RECEPTIONIST'}"
+                     style="margin-top:20px;">
+                <p:dataTable value="#{dashboardBean.recentActivity}" var="log" rows="8">
+                    <p:column headerText="When"><h:outputText value="#{log.timestamp}"><f:convertDateTime pattern="dd MMM yyyy HH:mm"/></h:outputText></p:column>
+                    <p:column headerText="Action"><h:outputText value="#{log.action}"/></p:column>
+                    <p:column headerText="Details"><h:outputText value="#{log.details}"/></p:column>
+                </p:dataTable>
             </p:panel>
+
+            <!-- ===== Doctor widgets ===== -->
+            <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-6,ui-g-6"
+                         rendered="#{loggedInUser.roleName == 'DOCTOR'}">
+                <p:panel header="Upcoming Appointments">
+                    <h:outputText value="#{dashboardBean.myUpcomingAppointments}" styleClass="mc-stat-value"/>
+                </p:panel>
+                <p:panel header="Completed Consultations">
+                    <h:outputText value="#{dashboardBean.myCompletedConsultations}" styleClass="mc-stat-value"/>
+                </p:panel>
+            </p:panelGrid>
+            <p:panel header="Today's Appointments" rendered="#{loggedInUser.roleName == 'DOCTOR'}" style="margin-top:20px;">
+                <p:dataTable value="#{dashboardBean.myTodaysAppointments}" var="appt" rows="10">
+                    <p:column headerText="Time"><h:outputText value="#{appt.appointmentTime}"><f:convertDateTime pattern="HH:mm" type="time"/></h:outputText></p:column>
+                    <p:column headerText="Patient"><h:outputText value="#{appt.patient.name}"/></p:column>
+                    <p:column headerText="Status"><h:outputText value="#{appt.status}"/></p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <!-- ===== Patient widgets ===== -->
+            <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-6,ui-g-6"
+                         rendered="#{loggedInUser.roleName == 'PATIENT'}">
+                <p:panel header="Upcoming Appointments">
+                    <h:outputText value="#{dashboardBean.myUpcomingAppointmentsAsPatient}" styleClass="mc-stat-value"/>
+                </p:panel>
+                <p:panel header="Unpaid Invoices">
+                    <h:outputText value="#{dashboardBean.myUnpaidInvoices}" styleClass="mc-stat-value"/>
+                </p:panel>
+            </p:panelGrid>
+
+            
+            <p:panel header="Quick Links" style="margin-top:20px;">
+                <div class="mc-link-list">
+                    <p:link outcome="/profile-photo" value="Update Profile Photo"/><br/>
+                    <p:link outcome="/admin/staff-list" value="Manage Staff" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
+                    <p:link outcome="/admin/doctor-schedules" value="View Doctor Schedules" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
+                    <p:link outcome="/admin/reports" value="Reports" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
+                    <p:link outcome="/receptionist/patients" value="Manage Patients" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/><br/>
+                    <p:link outcome="/admin/patients" value="View Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
+                    <p:link outcome="/patient/profile" value="My Profile" rendered="#{loggedInUser.roleName == 'PATIENT'}"/><br/>
+                    <p:link outcome="/doctor/profile" value="My Doctor Profile" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/><br/>
+                    <p:link outcome="/doctor/schedule" value="My Availability" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/><br/>
+                    <p:link outcome="/patient/appointments" value="My Appointments" rendered="#{loggedInUser.roleName == 'PATIENT'}"/><br/>
+                    <p:link outcome="/doctor/appointments" value="My Appointments (List)" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/><br/>
+                    <p:link outcome="/receptionist/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/><br/>
+                    <p:link outcome="/admin/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
+                    <p:link outcome="/patient/prescriptions" value="My Prescriptions" rendered="#{loggedInUser.roleName == 'PATIENT'}"/><br/>
+                    <p:link outcome="/receptionist/invoices" value="Manage Invoices" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/><br/>
+                    <p:link outcome="/admin/invoices" value="Manage Invoices" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
+                    <p:link outcome="/patient/billing" value="My Billing" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                </div>
+            </p:panel>
+
         </h:form>
-    </h:body>
-</html>
+    </ui:define>
+
+</ui:composition>

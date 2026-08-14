@@ -5,104 +5,122 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/template.xhtml">
 
-<h:head><title>Manage Staff</title></h:head>
-<h:body>
-    <h:form id="createForm">
-        <p:growl id="messages" showDetail="true"/>
+    <ui:define name="title">Manage Staff</ui:define>
 
-        <p:panel header="Create Staff Account">
-            <p:panelGrid columns="2">
-                <p:outputLabel for="name" value="Name"/>
-                <p:inputText id="name" value="#{adminStaffBean.name}" required="true"/>
+    <ui:define name="content">
+        <h1 class="mc-page-title">Manage Staff</h1>
 
-                <p:outputLabel for="phone" value="Phone"/>
-                <p:inputText id="phone" value="#{adminStaffBean.phone}"/>
+        <h:form id="createForm">
+            <p:growl id="messages" showDetail="true"/>
 
-                <p:outputLabel for="email" value="Email"/>
-                <p:inputText id="email" value="#{adminStaffBean.email}" required="true"/>
+            <p:panel header="Create Staff Account">
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="name" value="Name"/>
+                    <p:inputText id="name" value="#{adminStaffBean.name}" required="true"
+                                 requiredMessage="Name is required."/>
 
-                <p:outputLabel for="password" value="Temporary Password"/>
-                <p:password id="password" value="#{adminStaffBean.password}" required="true"/>
+                    <p:outputLabel for="phone" value="Phone"/>
+                    <p:inputText id="phone" value="#{adminStaffBean.phone}"
+                                 validatorMessage="Enter a valid phone number.">
+                        <f:validateRegex pattern="^[0-9+\-\s]{7,15}$"/>
+                    </p:inputText>
 
-                <p:outputLabel for="role" value="Role"/>
-                <p:selectOneMenu id="role" value="#{adminStaffBean.roleName}">
-                    <f:selectItem itemLabel="Receptionist" itemValue="RECEPTIONIST"/>
-                    <f:selectItem itemLabel="Doctor" itemValue="DOCTOR"/>
-                </p:selectOneMenu>
-            </p:panelGrid>
+                    <p:outputLabel for="email" value="Email"/>
+                    <p:inputText id="email" value="#{adminStaffBean.email}" required="true"
+                                 requiredMessage="Email is required."
+                                 validatorMessage="Please enter a valid email address.">
+                        <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"/>
+                    </p:inputText>
 
-            <br/>
-            <p:commandButton value="Create Account" icon="pi pi-plus" action="#{adminStaffBean.createStaff}" update="createForm listForm"/>
-        </p:panel>
-    </h:form>
+                    <p:outputLabel for="password" value="Temporary Password"/>
+                    <p:password id="password" value="#{adminStaffBean.password}" required="true"
+                                requiredMessage="Temporary password is required."
+                                validatorMessage="Password must be at least 8 characters.">
+                        <f:validateLength minimum="8"/>
+                    </p:password>
 
-    <br/>
+                    <p:outputLabel for="role" value="Role"/>
+                    <p:selectOneMenu id="role" value="#{adminStaffBean.roleName}">
+                        <f:selectItem itemLabel="Receptionist" itemValue="RECEPTIONIST"/>
+                        <f:selectItem itemLabel="Doctor" itemValue="DOCTOR"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
 
-    <h:form id="listForm">
-        <p:panel header="Staff Accounts">
-            <p:dataTable var="staff" value="#{adminStaffBean.staffList}" rowKey="#{staff.id}">
-               
-                <p:column headerText="Name">
-                    <h:outputText value="#{staff.name}"/>
-                </p:column>
-                
-                <p:column headerText="Email">
-                    <h:outputText value="#{staff.email}"/>
-                </p:column>
-                
-                <p:column headerText="Phone">
-                    <h:outputText value="#{staff.phone}"/>
-                </p:column>
-                
-                <p:column headerText="Role">
-                    <h:outputText value="#{staff.role.name}"/>
-                </p:column>
-                
-                <p:column headerText="Status">
-                    <h:outputText value="#{staff.status}"/>
-                </p:column>
-                
-                <p:column headerText="Actions">
-                    <p:commandButton value="Edit" icon="pi pi-pencil"
-                                      actionListener="#{adminStaffBean.startEdit(staff)}"
-                                      oncomplete="PF('editDialog').show()" update=":editForm" process="@this"/>
-
-                    <p:commandButton value="#{staff.status eq 'ACTIVE' ? 'Deactivate' : 'Reactivate'}"
-                                      icon="pi pi-power-off"
-                                      action="#{adminStaffBean.toggleStatus(staff)}" update="listForm"/>
-
-                    <p:commandButton value="Reset Password" icon="pi pi-key"
-                                      action="#{adminStaffBean.resetPassword(staff)}" update="createForm:messages"/>
-                </p:column>
-            </p:dataTable>
-        </p:panel>
-    </h:form>
-
-    <p:dialog header="Edit Staff" widgetVar="editDialog" modal="true">
-        <h:form id="editForm">
-            <p:panelGrid columns="2">
-                <p:outputLabel for="editName" value="Name"/>
-                <p:inputText id="editName" value="#{adminStaffBean.editName}" required="true"/>
-
-                <p:outputLabel for="editPhone" value="Phone"/>
-                <p:inputText id="editPhone" value="#{adminStaffBean.editPhone}"/>
-
-                <p:outputLabel for="editRole" value="Role"/>
-                <p:selectOneMenu id="editRole" value="#{adminStaffBean.editRoleName}">
-                    <f:selectItem itemLabel="Receptionist" itemValue="RECEPTIONIST"/>
-                    <f:selectItem itemLabel="Doctor" itemValue="DOCTOR"/>
-                </p:selectOneMenu>
-            </p:panelGrid>
-
-            <br/>
-            <p:commandButton value="Save" action="#{adminStaffBean.saveEdit}"
-                              oncomplete="PF('editDialog').hide()" update=":listForm"/>
+                <br/>
+                <p:commandButton value="Create Account" icon="pi pi-plus" action="#{adminStaffBean.createStaff}" update="createForm listForm"/>
+            </p:panel>
         </h:form>
-    </p:dialog>
-</h:body>
-</html>
+
+        <br/>
+
+        <h:form id="listForm">
+            <p:panel header="Staff Accounts">
+                <p:dataTable var="staff" value="#{adminStaffBean.staffList}" rowKey="#{staff.id}">
+
+                    <p:column headerText="Name">
+                        <h:outputText value="#{staff.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Email">
+                        <h:outputText value="#{staff.email}"/>
+                    </p:column>
+
+                    <p:column headerText="Phone">
+                        <h:outputText value="#{staff.phone}"/>
+                    </p:column>
+
+                    <p:column headerText="Role">
+                        <h:outputText value="#{staff.role.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Status">
+                        <h:outputText value="#{staff.status}"/>
+                    </p:column>
+
+                    <p:column headerText="Actions">
+                        <p:commandButton value="Edit" icon="pi pi-pencil"
+                                          actionListener="#{adminStaffBean.startEdit(staff)}"
+                                          oncomplete="PF('editDialog').show()" update=":editForm" process="@this"/>
+
+                        <p:commandButton value="#{staff.status eq 'ACTIVE' ? 'Deactivate' : 'Reactivate'}"
+                                          icon="pi pi-power-off"
+                                          action="#{adminStaffBean.toggleStatus(staff)}" update="listForm"/>
+
+                        <p:commandButton value="Reset Password" icon="pi pi-key"
+                                          action="#{adminStaffBean.resetPassword(staff)}" update="createForm:messages"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+
+        <p:dialog header="Edit Staff" widgetVar="editDialog" modal="true">
+            <h:form id="editForm">
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="editName" value="Name"/>
+                    <p:inputText id="editName" value="#{adminStaffBean.editName}" required="true"/>
+
+                    <p:outputLabel for="editPhone" value="Phone"/>
+                    <p:inputText id="editPhone" value="#{adminStaffBean.editPhone}"/>
+
+                    <p:outputLabel for="editRole" value="Role"/>
+                    <p:selectOneMenu id="editRole" value="#{adminStaffBean.editRoleName}">
+                        <f:selectItem itemLabel="Receptionist" itemValue="RECEPTIONIST"/>
+                        <f:selectItem itemLabel="Doctor" itemValue="DOCTOR"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+
+                <br/>
+                <p:commandButton value="Save" action="#{adminStaffBean.saveEdit}"
+                                  oncomplete="PF('editDialog').hide()" update=":listForm"/>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

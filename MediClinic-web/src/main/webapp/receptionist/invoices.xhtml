@@ -6,75 +6,74 @@ and open the template in the editor.
 -->
 <!DOCTYPE html>
 
-<html  xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
-          
-    <h:head>
-        <title>Invoices</title>
-    </h:head>
-    
-    <h:body>
-        
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/template.xhtml">
+
+    <ui:define name="title">Invoices</ui:define>
+
+    <ui:define name="content">
+        <h1 class="mc-page-title">Manage Invoices</h1>
+
         <h:form id="invForm">
             <p:growl id="messages" showDetail="true"/>
-            
-            <p:panel header="All invoices">
+
+            <p:panel header="All Invoices">
                 <p:dataTable var="i" value="#{billingBean.invoices}" rowKey="#{i.id}">
-                    
+
                     <p:column headerText="Invoice">
                         <h:outputText value="#{i.invoiceNumber}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Patient">
                         <h:outputText value="#{i.consultation.appointment.patient.name}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Doctor">
                         <h:outputText value="#{i.consultation.appointment.doctor.name}"/>
                     </p:column>
-                    
-                    <p:column headerText="fee">
+
+                    <p:column headerText="Fee">
                         <h:outputText value="#{i.consultationFee}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Tax">
                         <h:outputText value="#{i.tax}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Total">
                         <h:outputText value="#{i.totalAmount}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Status">
                         <h:outputText value="#{i.status}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Issued">
                         <h:outputText value="#{i.issuedDate}"><f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/></h:outputText>
                     </p:column>
-                    
+
                     <p:column headerText="Actions">
                         <p:commandButton value="Manage" icon="pi pi-cog"
                                          actionListener="#{billingBean.select(i)}"
                                          oncomplete="PF('invoiceDialog').show()" update=":invoiceDialogForm" process="@this"/>
-                    
+
                         <h:outputLink value="#{request.contextPath}/invoice/#{i.id}" style="margin-left:8px">
                             <h:outputText value="Download PDF"/>
                         </h:outputLink>
                     </p:column>
-                    
-                    
-                
+
                 </p:dataTable>
-                
+
             </p:panel>
-            
+
         </h:form>
-        
+
         <p:dialog header="Manage Invoice" widgetVar="invoiceDialog" modal="true" width="550">
-            
+
             <h:form id="invoiceDialogForm">
                 <p:messages showDetail="true"/>
 
@@ -108,7 +107,6 @@ and open the template in the editor.
 
                 <br/><br/>
 
-                
                 <h:panelGroup rendered="#{loggedInUser.roleName == 'RECEPTIONIST' and (billingBean.selectedInvoice.status == 'UNPAID' or billingBean.selectedInvoice.status == 'PARTIALLY_PAID')}">
                     <p:outputLabel value="Transaction Ref (optional)"/>
                     <p:inputText value="#{billingBean.cashTransactionRef}"/>
@@ -118,31 +116,31 @@ and open the template in the editor.
                 <br/><br/>
 
                 <p:outputLabel value="Payment History" style="font-weight:bold"/>
-                
+
                 <p:dataTable var="pay" value="#{billingBean.selectedPayments}" rowKey="#{pay.id}" rendered="#{not empty billingBean.selectedPayments}">
-                    
+
                     <p:column headerText="Method">
                         <h:outputText value="#{pay.paymentMethod}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Amount">
                         <h:outputText value="#{pay.amount}"/>
                     </p:column>
-                    
+
                     <p:column headerText="Date">
                         <h:outputText value="#{pay.paymentDate}"><f:convertDateTime pattern="yyyy-MM-dd HH:mm" timeZone="UTC"/></h:outputText>
                     </p:column>
-                    
+
                     <p:column headerText="Ref">
                         <h:outputText value="#{pay.transactionRef}"/>
                     </p:column>
-                    
+
                 </p:dataTable>
-                
+
                 <h:outputText value="No payments recorded yet." rendered="#{empty billingBean.selectedPayments}"/>
-                
+
             </h:form>
         </p:dialog>
+    </ui:define>
 
-    </h:body>
-</html>
+</ui:composition>

@@ -5,38 +5,74 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/template.xhtml">
 
-<h:head><title>Patient Registration</title></h:head>
-<h:body>
-    <h:form id="registerForm">
-        <p:growl id="messages" showDetail="true"/>
-        <p:panel header="Patient Registration">
-            <p:panelGrid columns="2">
-                <p:outputLabel for="name" value="Name"/>
-                <p:inputText id="name" value="#{registerBean.name}" required="true" requiredMessage="Name is required."/>
+    <ui:define name="title">Patient Registration</ui:define>
 
-                <p:outputLabel for="phone" value="Phone Number"/>
-                <p:inputText id="phone" value="#{registerBean.phone}" required="true" requiredMessage="Phone number is required."/>
+    <ui:define name="content">
+        <div class="mc-center-wrap">
+            <div class="mc-card" style="max-width:460px;">
+                <h:form id="registerForm">
+                    <p:growl id="messages" showDetail="true"/>
 
-                <p:outputLabel for="email" value="Email"/>
-                <p:inputText id="email" value="#{registerBean.email}" required="true" requiredMessage="Email is required."/>
+                    <p:panel header="Create Your Account">
+                        <p class="mc-muted" style="margin-top:0;">Register as a patient to book appointments online.</p>
 
-                <p:outputLabel for="password" value="Password"/>
-                <p:password id="password" value="#{registerBean.password}" required="true" requiredMessage="Password is required."/>
+                        <p:panelGrid columns="1" layout="grid" style="width:100%;">
 
-                <p:outputLabel for="confirmPassword" value="Confirm Password"/>
-                <p:password id="confirmPassword" value="#{registerBean.confirmPassword}" required="true" requiredMessage="Please confirm your password."/>
-            </p:panelGrid>
+                            <p:outputLabel for="name" value="Full Name"/>
+                            <p:inputText id="name" value="#{registerBean.name}"
+                                         required="true" requiredMessage="Name is required."
+                                         maxlength="100" style="width:100%;"/>
 
-            <br/>
-            <p:commandButton value="Register" icon="pi pi-check" action="#{registerBean.register}" update="registerForm messages"/>
+                            <p:outputLabel for="phone" value="Phone Number"/>
+                            <p:inputText id="phone" value="#{registerBean.phone}"
+                                         required="true" requiredMessage="Phone number is required."
+                                         validatorMessage="Enter a valid phone number (digits only, 7-15 characters)."
+                                         style="width:100%;">
+                                <f:validateRegex pattern="^[0-9+\-\s]{7,15}$"/>
+                            </p:inputText>
 
-            <br/><br/>
-            <p:link outcome="login" value="Already have an account? Login"/>
-        </p:panel>
-    </h:form>
-</h:body>
-</html>
+                            <p:outputLabel for="email" value="Email"/>
+                            <p:inputText id="email" value="#{registerBean.email}"
+                                         required="true" requiredMessage="Email is required."
+                                         validatorMessage="Please enter a valid email address."
+                                         style="width:100%;">
+                                <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"/>
+                            </p:inputText>
+
+                            <p:outputLabel for="password" value="Password"/>
+                            <p:password id="password" value="#{registerBean.password}"
+                                        required="true" requiredMessage="Password is required."
+                                        validatorMessage="Password must be at least 8 characters."
+                                        feedback="true" toggleMask="true" match="confirmPassword"
+                                        style="width:100%;">
+                                <f:validateLength minimum="8"/>
+                            </p:password>
+
+                            <p:outputLabel for="confirmPassword" value="Confirm Password"/>
+                            <p:password id="confirmPassword" value="#{registerBean.confirmPassword}"
+                                        required="true" requiredMessage="Please confirm your password."
+                                        feedback="false" toggleMask="true" style="width:100%;"/>
+
+                        </p:panelGrid>
+
+                        <br/>
+                        <p:commandButton value="Register" icon="pi pi-check" action="#{registerBean.register}"
+                                          update="registerForm messages" style="width:100%;"/>
+
+                        <div style="text-align:center; margin-top:16px;">
+                            <p:link outcome="login" value="Already have an account? Login"/>
+                        </div>
+                    </p:panel>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

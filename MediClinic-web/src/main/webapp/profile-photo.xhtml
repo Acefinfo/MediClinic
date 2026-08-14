@@ -5,29 +5,39 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/template.xhtml">
 
-<h:head><title>Profile Photo</title></h:head>
-<h:body>
-    <h:form id="photoForm" enctype="multipart/form-data">
-        <p:growl id="messages" showDetail="true"/>
+    <ui:define name="title">Profile Photo</ui:define>
 
-        <p:panel header="Profile Photo">
-            <h:panelGrid columns="1">
-                <p:graphicImage value="/photo/#{loggedInUser.user.id}" cache="false" width="150"
-                                 rendered="#{loggedInUser.user.photoPath ne null}"/>
-                <h:outputText value="No photo uploaded yet." rendered="#{loggedInUser.user.photoPath eq null}"/>
-            </h:panelGrid>
+    <ui:define name="content">
+        <div class="mc-center-wrap">
+            <div class="mc-card">
+                <h:form id="photoForm" enctype="multipart/form-data">
+                    <p:growl id="messages" showDetail="true"/>
 
-            <br/>
-            <p:fileUpload id="upload" value="#{profilePhotoBean.file}" mode="simple" skinSimple="true"
-                          allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
-            <br/>
-            <p:commandButton value="Upload Photo" ajax="false" action="#{profilePhotoBean.upload}"/>
-        </p:panel>
-    </h:form>
-</h:body>
-</html>
+                    <p:panel header="Profile Photo">
+                        <div style="text-align:center;">
+                            <p:graphicImage value="/photo/#{loggedInUser.user.id}" cache="false" width="150"
+                                             rendered="#{loggedInUser.user.photoPath ne null}"
+                                             style="border-radius:50%; border:3px solid #0d9488;"/>
+                            <h:outputText value="No photo uploaded yet." rendered="#{loggedInUser.user.photoPath eq null}"
+                                          styleClass="mc-muted"/>
+                        </div>
+
+                        <br/>
+                        <p:fileUpload id="upload" value="#{profilePhotoBean.file}" mode="simple" skinSimple="true"
+                                      allowTypes="/(\.|\/)(gif|jpe?g|png)$/" style="width:100%;"/>
+                        <br/>
+                        <p:commandButton value="Upload Photo" ajax="false" action="#{profilePhotoBean.upload}" style="width:100%;"/>
+                    </p:panel>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

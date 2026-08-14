@@ -7,26 +7,23 @@ and open the template in the editor.
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  template="/template.xhtml">
 
-    <f:metadata>
-        <f:viewParam name="token" value="#{verifyEmailBean.token}"/>
-        <f:event type="preRenderView" listener="#{verifyEmailBean.verify}"/>
-    </f:metadata>
-
-    <ui:define name="title">Email Verification</ui:define>
+    <ui:define name="title">Something Went Wrong</ui:define>
 
     <ui:define name="content">
         <div class="mc-center-wrap">
-            <div class="mc-card">
-                <p:panel header="Email Verification">
-                    <h:outputText value="#{verifyEmailBean.resultMessage}"/>
-                    <br/><br/>
-                    <p:link outcome="login" value="Back to Login" rendered="#{verifyEmailBean.success}"/>
-                </p:panel>
+            <div class="mc-card" style="max-width:480px; text-align:center;">
+                <div style="font-size:4em; font-weight:700; color:#dc2626; line-height:1;">500</div>
+                <h1 class="mc-page-title" style="margin-top:12px;">Something Went Wrong</h1>
+                <p class="mc-muted">
+                    An unexpected error occurred on our end. Please try again in a moment,
+                    or contact support if the problem continues.
+                </p>
+                <br/>
+                <p:link outcome="/dashboard" value="Back to Dashboard"/>
             </div>
         </div>
     </ui:define>
