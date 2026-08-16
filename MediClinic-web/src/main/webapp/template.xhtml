@@ -229,44 +229,52 @@ and open the template in the editor.
 
                 <div class="mc-nav">
                     <h:panelGroup rendered="#{loggedInUser.loggedIn}">
-                        <h:link outcome="/dashboard" value="Dashboard"/>
+                    <h:link outcome="/dashboard" value="Dashboard"/>
 
-                        <h:link outcome="/patient/appointments" value="My Appointments"
-                                rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                        <h:link outcome="/patient/prescriptions" value="Prescriptions"
-                                rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                        <h:link outcome="/patient/billing" value="Billing"
-                                rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                    <h:link outcome="/patient/appointments" value="My Appointments"
+                             rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                    <h:link outcome="/patient/prescriptions" value="Prescriptions"
+                             rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                    <h:link outcome="/patient/billing" value="Billing"
+                             rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                    <h:link outcome="/patient/profile" value="My Profile"
+                             rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
 
-                        <h:link outcome="/doctor/appointments" value="My Appointments"
-                                rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-                        <h:link outcome="/doctor/schedule" value="My Availability"
-                                rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                    <h:link outcome="/doctor/appointments" value="My Appointments"
+                             rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                    <h:link outcome="/doctor/schedule" value="My Availability"
+                             rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                    <h:link outcome="/doctor/profile" value="My Profile"
+                             rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
 
-                        <h:link outcome="/receptionist/appointments" value="Appointments"
-                                rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-                        <h:link outcome="/receptionist/patients" value="Patients"
-                                rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-                        <h:link outcome="/receptionist/invoices" value="Invoices"
-                                rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                    <h:link outcome="/receptionist/appointments" value="Appointments"
+                             rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                    <h:link outcome="/receptionist/patients" value="Patients"
+                             rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                    <h:link outcome="/receptionist/invoices" value="Invoices"
+                             rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
 
-                        <h:link outcome="/admin/staff-list" value="Staff"
-                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                        <h:link outcome="/admin/patients" value="Patients"
-                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                        <h:link outcome="/admin/appointments" value="Appointments"
-                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                        <h:link outcome="/admin/invoices" value="Invoices"
-                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                        <h:link outcome="/admin/reports" value="Reports"
-                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                    <h:link outcome="/admin/staff-list" value="Staff"
+                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                    <h:link outcome="/admin/patients" value="Patients"
+                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                    <h:link outcome="/admin/appointments" value="Appointments"
+                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                    <h:link outcome="/admin/invoices" value="Invoices"
+                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                    <h:link outcome="/admin/doctor-schedules" value="Doctor Schedules"
+                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                    <h:link outcome="/admin/reports" value="Reports"
+                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
 
-                        <span class="mc-role-badge">#{loggedInUser.roleName}</span>
+                    <h:link outcome="/profile-photo" value="Profile Photo"/>
 
-                        <h:form class="mc-logout-btn">
-                            <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{loggedInUser.logout}" ajax="false"/>
-                        </h:form>
-                    </h:panelGroup>
+                    <span class="mc-role-badge">#{loggedInUser.roleName}</span>
+
+                    <h:form class="mc-logout-btn">
+                        <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{loggedInUser.logout}" ajax="false"/>
+                    </h:form>
+                </h:panelGroup>
 
                     <h:panelGroup rendered="#{!loggedInUser.loggedIn}">
                         <h:link outcome="/login" value="Login"/>

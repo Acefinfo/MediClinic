@@ -51,8 +51,8 @@ public class AdminStaffBean implements Serializable {
     private LoggedInUser loggedInUser;
 
     /**
-     * Initializes the managed bean after construction.
-     * Loads all staff members into the table.
+     * Initializes the managed bean after construction. Loads all staff members
+     * into the table.
      */
     @PostConstruct
     public void init() {
@@ -67,8 +67,8 @@ public class AdminStaffBean implements Serializable {
     }
 
     /**
-     * Creates new staff account using the entered from data.
-     * Clears the form and refreshes the staff list if successful
+     * Creates new staff account using the entered from data. Clears the form
+     * and refreshes the staff list if successful
      */
     public void createStaff() {
         try {
@@ -87,9 +87,10 @@ public class AdminStaffBean implements Serializable {
 
     /**
      * Loads the selected staff members details into edit form.
-     * @param user 
+     *
+     * @param user
      */
-    public void startEdint(User user) {
+    public void startEdit(User user) {
         editUserId = user.getId();
         editName = user.getName();
         editPhone = user.getPhone();
@@ -111,9 +112,9 @@ public class AdminStaffBean implements Serializable {
     }
 
     /**
-     * Activates or deactivates a staff account depending on its current status. 
-     * 
-     * @param user 
+     * Activates or deactivates a staff account depending on its current status.
+     *
+     * @param user
      */
     public void toggleStatus(User user) {
         try {
@@ -129,9 +130,10 @@ public class AdminStaffBean implements Serializable {
     }
 
     /**
-     * Resets the selected staff member's password.
-     * The generated password is displayed once to the administrator.
-     * @param user 
+     * Resets the selected staff member's password. The generated password is
+     * displayed once to the administrator.
+     *
+     * @param user
      */
     public void resetPassword(User user) {
         try {
@@ -146,15 +148,15 @@ public class AdminStaffBean implements Serializable {
 
     /**
      * Display a JSF FacesMessage on the page
+     *
      * @param severity
      * @param summary
-     * @param detail 
+     * @param detail
      */
     private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }
-    
-    
+
     // Getter methods
     public List<User> getStaffList() {
         return staffList;
@@ -226,7 +228,8 @@ public class AdminStaffBean implements Serializable {
 
     /**
      * Injects the currently logged-in user
-     * @param loggedInUser 
+     *
+     * @param loggedInUser
      */
     public void setLoggedInUser(LoggedInUser loggedInUser) {
         this.loggedInUser = loggedInUser;

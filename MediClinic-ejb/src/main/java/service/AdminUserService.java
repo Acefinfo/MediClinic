@@ -26,36 +26,42 @@ import util.TokenUtil;
  */
 @Stateless
 public class AdminUserService {
-    
+
     @EJB
     private UserDao userDao;
-    
+
     @EJB
     private RoleDao roleDao;
     @EJB
     private DoctorDao doctorDao;
-    
+
     @EJB
     private ActivityLogDao activityLogDao;
-    
-    
-    public List<User> listAllStaff(){
-        return userDao.findByRoleNames(Arrays.asList("DOCTOR", "RECEPTIONIST"));
+
+    public List<User> listAllStaff() {
+        return userDao.findByRoleNames(Arrays.asList("DOCTOR", "RECEPTIONIST", "ADMIN"));
     }
-    
-    public User createStaffUser(User actor, String email, String password, String name, String phone, String roleName) throws AuthException{
-        if (!"DOCTOR".equals(roleName) && !"RECEPTIONIST".equals(roleName)) {
-            throw new AuthException("Staff accounts must be DOCTOR or RECEPTIONIST.");
+
+    public User createStaffUser(User actor, String email, String password, String name, String phone, String roleName) throws AuthException {
+        boolean actorIsAdmin = actor != null && actor.getRole() != null && "ADMIN".equals(actor.getRole().getName());
+
+        if ("ADMIN".equals(roleName)) {
+            if (!actorIsAdmin) {
+                throw new AuthException("Only an administrator can create another admin account.");
+            }
+        } else if (!"DOCTOR".equals(roleName) && !"RECEPTIONIST".equals(roleName)) {
+            throw new AuthException("Staff accounts must be DOCTOR, RECEPTIONIST, or ADMIN.");
         }
+
         if (userDao.existsByEmail(email)) {
             throw new AuthException("An account with this email already exists.");
         }
-        
+
         Role role = roleDao.findByName(roleName);
-        if(role == null){
+        if (role == null) {
             throw new AuthException(roleName + "role is now configured");
         }
-        
+
         User user = new User();
         user.setEmail(email);
         user.setPassword(PasswordUtil.hash(password));
@@ -65,7 +71,7 @@ public class AdminUserService {
         user.setStatus(User.UserStatus.ACTIVE);
         user.setEmailVerified(true);
         userDao.create(user);
-        
+
         if ("DOCTOR".equals(roleName)) {
             Doctor doctor = new Doctor();
             doctor.setUser(user);
@@ -73,25 +79,25 @@ public class AdminUserService {
             doctor.setPhone(phone);
             doctorDao.create(doctor);
         }
-        
+
         log(actor, "CREATE_STAFF", "User", user.getId(), "Created " + roleName + " account for " + email);
         return user;
     }
-    
-    public void deactivateUser(User actor, Long userId) throws AuthException{
+
+    public void deactivateUser(User actor, Long userId) throws AuthException {
         User target = requireUser(userId);
         target.setStatus(User.UserStatus.DEACTIVATED);
         userDao.update(target);
         log(actor, "DEACTIVATE_USER", "User", userId, "Deactivated account " + target.getEmail());
     }
-    
+
     public void reactivateUser(User actor, Long userId) throws AuthException {
         User target = requireUser(userId);
         target.setStatus(User.UserStatus.ACTIVE);
         userDao.update(target);
         log(actor, "REACTIVATE_USER", "User", userId, "Reactivated account " + target.getEmail());
     }
-    
+
     public String adminResetPassword(User actor, Long userId) throws AuthException {
         User target = requireUser(userId);
         String tempPassword = TokenUtil.generateToken().substring(0, 10);
@@ -100,8 +106,13 @@ public class AdminUserService {
         log(actor, "RESET_PASSWORD", "User", userId, "Admin reset password for " + target.getEmail());
         return tempPassword;
     }
-    
+
     public void updateRole(User actor, Long userId, String newRoleName) throws AuthException {
+        boolean actorIsAdmin = actor != null && actor.getRole() != null && "ADMIN".equals(actor.getRole().getName());
+        if ("ADMIN".equals(newRoleName) && !actorIsAdmin) {
+            throw new AuthException("Only an administrator can grant admin access.");
+        }
+
         User target = requireUser(userId);
         Role newRole = roleDao.findByName(newRoleName);
         if (newRole == null) {
@@ -112,8 +123,8 @@ public class AdminUserService {
         userDao.update(target);
         log(actor, "CHANGE_ROLE", "User", userId, "Changed role of " + target.getEmail() + " from " + oldRole + " to " + newRoleName);
     }
-    
-     public void updateStaffProfile(User actor, Long userId, String name, String phone) throws AuthException {
+
+    public void updateStaffProfile(User actor, Long userId, String name, String phone) throws AuthException {
         User target = requireUser(userId);
         target.setName(name);
         target.setPhone(phone);
@@ -127,8 +138,7 @@ public class AdminUserService {
         }
         log(actor, "UPDATE_STAFF_PROFILE", "User", userId, "Updated profile for " + target.getEmail());
     }
-    
-    
+
     private User requireUser(Long userId) throws AuthException {
         User user = userDao.findById(userId);
         if (user == null) {
@@ -136,7 +146,7 @@ public class AdminUserService {
         }
         return user;
     }
-    
+
     private void log(User actor, String action, String entityName, Long entityId, String details) {
         ActivityLog entry = new ActivityLog();
         entry.setUser(actor);
@@ -146,5 +156,5 @@ public class AdminUserService {
         entry.setDetails(details);
         activityLogDao.create(entry);
     }
-    
+
 }

@@ -98,28 +98,6 @@ and open the template in the editor.
                 </p:panel>
             </p:panelGrid>
 
-            
-            <p:panel header="Quick Links" style="margin-top:20px;">
-                <div class="mc-link-list">
-                    <p:link outcome="/profile-photo" value="Update Profile Photo"/><br/>
-                    <p:link outcome="/admin/staff-list" value="Manage Staff" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
-                    <p:link outcome="/admin/doctor-schedules" value="View Doctor Schedules" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
-                    <p:link outcome="/admin/reports" value="Reports" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
-                    <p:link outcome="/receptionist/patients" value="Manage Patients" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/><br/>
-                    <p:link outcome="/admin/patients" value="View Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
-                    <p:link outcome="/patient/profile" value="My Profile" rendered="#{loggedInUser.roleName == 'PATIENT'}"/><br/>
-                    <p:link outcome="/doctor/profile" value="My Doctor Profile" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/><br/>
-                    <p:link outcome="/doctor/schedule" value="My Availability" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/><br/>
-                    <p:link outcome="/patient/appointments" value="My Appointments" rendered="#{loggedInUser.roleName == 'PATIENT'}"/><br/>
-                    <p:link outcome="/doctor/appointments" value="My Appointments (List)" rendered="#{loggedInUser.roleName == 'DOCTOR'}"/><br/>
-                    <p:link outcome="/receptionist/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/><br/>
-                    <p:link outcome="/admin/appointments" value="Manage Appointments" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
-                    <p:link outcome="/patient/prescriptions" value="My Prescriptions" rendered="#{loggedInUser.roleName == 'PATIENT'}"/><br/>
-                    <p:link outcome="/receptionist/invoices" value="Manage Invoices" rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/><br/>
-                    <p:link outcome="/admin/invoices" value="Manage Invoices" rendered="#{loggedInUser.roleName == 'ADMIN'}"/><br/>
-                    <p:link outcome="/patient/billing" value="My Billing" rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                </div>
-            </p:panel>
 
         </h:form>
     </ui:define>

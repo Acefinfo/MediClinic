@@ -18,8 +18,51 @@ and open the template in the editor.
         <h1 class="mc-page-title">My Appointments</h1>
 
         <h:form id="apptForm">
-            <p:panel header="My Appointments">
-                <p:dataTable var="a" value="#{doctorAppointmentBean.appointments}" rowKey="#{a.id}">
+
+            <p:panel header="Search">
+                <p:inputText value="#{doctorAppointmentBean.searchKeyword}"
+                             placeholder="Search by patient name, reason, or status"
+                             style="width:320px;"/>
+                <p:commandButton value="Search" icon="pi pi-search"
+                                  action="#{doctorAppointmentBean.search}" update="apptForm"/>
+                <p:commandButton value="Reset" icon="pi pi-times"
+                                  action="#{doctorAppointmentBean.clearSearch}" update="apptForm"/>
+            </p:panel>
+
+            <br/>
+
+            <p:panel header="Today's Appointments">
+                <p:dataTable var="a" value="#{doctorAppointmentBean.todayAppointments}" rowKey="#{a.id}">
+
+                    <p:column headerText="Patient"><h:outputText value="#{a.patient.name}"/></p:column>
+
+                    <p:column headerText="Time">
+                        <h:outputText value="#{a.appointmentTime}"><f:convertDateTime pattern="HH:mm" timeZone="UTC"/></h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Status"><h:outputText value="#{a.status}"/></p:column>
+
+                    <p:column headerText="Reason"><h:outputText value="#{a.reason}"/></p:column>
+
+                    <p:column headerText="Consultation">
+                        <p:link outcome="/consultation" value="Start Consultation" rendered="#{a.status == 'APPROVED'}">
+                            <f:param name="appointmentId" value="#{a.id}"/>
+                        </p:link>
+                        <p:link outcome="/consultation" value="View Consultation" rendered="#{a.status == 'COMPLETED'}">
+                            <f:param name="appointmentId" value="#{a.id}"/>
+                        </p:link>
+                    </p:column>
+
+                </p:dataTable>
+
+                <h:outputText value="No appointments scheduled for today."
+                               rendered="#{empty doctorAppointmentBean.todayAppointments}" styleClass="mc-muted"/>
+            </p:panel>
+
+            <br/>
+
+            <p:panel header="Other Appointments">
+                <p:dataTable var="a" value="#{doctorAppointmentBean.otherAppointments}" rowKey="#{a.id}">
 
                     <p:column headerText="Patient"><h:outputText value="#{a.patient.name}"/></p:column>
 
@@ -45,7 +88,11 @@ and open the template in the editor.
                     </p:column>
 
                 </p:dataTable>
+
+                <h:outputText value="No other appointments found."
+                               rendered="#{empty doctorAppointmentBean.otherAppointments}" styleClass="mc-muted"/>
             </p:panel>
+
         </h:form>
     </ui:define>
 
