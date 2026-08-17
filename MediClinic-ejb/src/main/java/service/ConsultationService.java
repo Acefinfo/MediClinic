@@ -13,6 +13,7 @@ import entity.Appointment;
 import entity.Appointment.Status;
 import entity.Consultation;
 import entity.User;
+import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -116,7 +117,22 @@ public class ConsultationService {
         return consultation;
         
     }
+    
 
+    public List<Consultation> listPatientHistoryForDoctor(User actor, Long patientId) throws AuthException {
+        boolean hasRelationship = false;
+        for (Appointment a : appointmentDao.findByPatientId(patientId)) {
+            if (a.getDoctor() != null && a.getDoctor().getUser() != null
+                    && a.getDoctor().getUser().getId().equals(actor.getId())) {
+                hasRelationship = true;
+                break;
+            }
+        }
+        if(!hasRelationship){
+            throw new AuthException("You can only view medical history for patients you have treated.");
+        }
+        return consultationDao.findByPatientId(patientId);
+    }
     /**
      * Creates an activity log entry for adding user action. 
      * @param actor

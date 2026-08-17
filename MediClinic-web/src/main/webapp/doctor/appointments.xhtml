@@ -52,6 +52,12 @@ and open the template in the editor.
                             <f:param name="appointmentId" value="#{a.id}"/>
                         </p:link>
                     </p:column>
+                    
+                    <p:column headerText="History">
+                        <p:link outcome="/doctor/patient-history" value="Patient History">
+                            <f:param name="patientId" value="#{a.patient.id}"/>
+                        </p:link>
+                    </p:column>
 
                 </p:dataTable>
 
@@ -84,6 +90,12 @@ and open the template in the editor.
                         </p:link>
                         <p:link outcome="/consultation" value="View Consultation" rendered="#{a.status == 'COMPLETED'}">
                             <f:param name="appointmentId" value="#{a.id}"/>
+                        </p:link>
+                    </p:column>
+                    
+                    <p:column headerText="History">
+                        <p:link outcome="/doctor/patient-history" value="Patient History">
+                            <f:param name="patientId" value="#{a.patient.id}"/>
                         </p:link>
                     </p:column>
 

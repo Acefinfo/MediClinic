@@ -20,55 +20,61 @@ import javax.persistence.PersistenceContext;
 @Stateless
 @PermitAll
 public class ConsultationDao {
-    
+
     @PersistenceContext(unitName = "um_mediclinicdb")
     private EntityManager em;
-    
+
     /**
      * Saves a new consultation record to the database.
-     * @param consultation 
+     *
+     * @param consultation
      */
-    public void create(Consultation consultation){
+    public void create(Consultation consultation) {
         em.persist(consultation);
     }
-    
+
     /**
-     * Updates an existing consultation records. 
+     * Updates an existing consultation records.
+     *
      * @param consultation
-     * @return 
+     * @return
      */
-    public Consultation update(Consultation consultation){
+    public Consultation update(Consultation consultation) {
         return em.merge(consultation);
     }
-    
+
     /**
      * Find an existing consultation by its primary key.
+     *
      * @param id
-     * @return 
+     * @return
      */
-    public Consultation findById(Long id){
-        if (id == null){
+    public Consultation findById(Long id) {
+        if (id == null) {
             return null;
         }
         return em.find(Consultation.class, id);
     }
+
     /**
      * Finds the consultation tied to a specific appointment, if one exists.
+     *
      * @param appointmentId
-     * @return 
+     * @return
      */
-    public Consultation findByAppointmentId(Long appointmentId){
-        try{
+    public Consultation findByAppointmentId(Long appointmentId) {
+        try {
             return em.createQuery("SELECT c FROM Consultation c WHERE c.appointment.id = :appointmentId", Consultation.class)
                     .setParameter("appointmentId", appointmentId)
                     .getSingleResult();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return null;
         }
     }
-    
+
     /**
      * Retrieves all consultations recorded by a specific doctor.
+     *
      * @param doctorId
      * @return
      */
@@ -78,9 +84,10 @@ public class ConsultationDao {
                 .setParameter("doctorId", doctorId)
                 .getResultList();
     }
-    
+
     /**
      * Retrieves every consultation in the system.
+     *
      * @return
      */
     public List<Consultation> findAll() {
@@ -88,12 +95,24 @@ public class ConsultationDao {
                 "SELECT c FROM Consultation c ORDER BY c.consultationDate DESC", Consultation.class)
                 .getResultList();
     }
-    
+
     public long countByDoctorId(Long doctorId) {
-        return em.createQuery( "SELECT COUNT(c) FROM Consultation c WHERE c.appointment.doctor.id = :doctorId", Long.class)
+        return em.createQuery("SELECT COUNT(c) FROM Consultation c WHERE c.appointment.doctor.id = :doctorId", Long.class)
                 .setParameter("doctorId", doctorId)
                 .getSingleResult();
     }
 
-}
+    /**
+     * Retrieves the full consultation history for a patient, across all
+     * doctors.
+     *
+     * @param patientId
+     * @return
+     */
+    public List<Consultation> findByPatientId(Long patientId) {
+        return em.createQuery("SELECT c FROM Consultation c WHERE c.appointment.patient.id = :patientId ORDER BY c.consultationDate DESC", Consultation.class)
+                .setParameter("patientId", patientId)
+                .getResultList();
+    }
 
+}
