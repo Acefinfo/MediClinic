@@ -52,15 +52,10 @@ public class AppointmentService {
     }
 
     /**
-     * Books a new appointment for a patient.
-     * Steps:
-     *      1. Verify patient profile.
-     *      2. Validate doctor and schedule.
-     *      3. Validate date/time.
-     *      4. Check schedule capacity.
-     *      5. Save appointment.
-     *      6. Record activity log.
-     * 
+     * Books a new appointment for a patient. Steps: 1. Verify patient profile.
+     * 2. Validate doctor and schedule. 3. Validate date/time. 4. Check schedule
+     * capacity. 5. Save appointment. 6. Record activity log.
+     *
      * @param actor
      * @param doctorId
      * @param scheduleId
@@ -68,7 +63,7 @@ public class AppointmentService {
      * @param appointmentTime
      * @param reason
      * @return
-     * @throws AuthException 
+     * @throws AuthException
      */
     public Appointment bookAppointment(User actor, Long doctorId, Long scheduleId, Date appointmentDate,
             Date appointmentTime, String reason) throws AuthException {
@@ -99,14 +94,13 @@ public class AppointmentService {
         return appointment;
     }
 
-
     /**
-     * Approves a pending appointment.
-     * Only appointments with REQIESTED status cane be approved.
-     * 
+     * Approves a pending appointment. Only appointments with REQIESTED status
+     * cane be approved.
+     *
      * @param actor
      * @param appointmentId
-     * @throws AuthException 
+     * @throws AuthException
      */
     public void approveAppointment(User actor, Long appointmentId) throws AuthException {
         Appointment appointment = requireAppointment(appointmentId);
@@ -118,15 +112,47 @@ public class AppointmentService {
         log(actor, "APPROVE_APPOINTMENT", "Appointment", appointmentId, "Appointment approved");
     }
 
+    public Appointment bookAppointmentForPaitent(User actor, Long patientId, Long doctorId, Long scheduleId, Date appointmentDate, Date appointmentTime, String reason) throws AuthException {
+
+        Patient patient = patientDao.findById(patientId);
+        if (patient == null) {
+            throw new AuthException("Patient not found.");
+        }
+        Doctor doctor = doctorDao.findById(doctorId);
+        if (doctor == null) {
+            throw new AuthException("Doctor not found.");
+        }
+        DoctorSchedule schedule = doctorScheduleDao.findById(scheduleId);
+        if (schedule == null || !schedule.getDoctor().getId().equals(doctorId)) {
+            throw new AuthException("Availability slot not found for this doctor.");
+        }
+        validateSlot(schedule, appointmentDate, appointmentTime);
+        ensureCapacity(schedule, appointmentDate, null);
+
+        Appointment appointment = new Appointment();
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+        appointment.setSchedule(schedule);
+        appointment.setAppointmentDate(appointmentDate);
+        appointment.setAppointmentTime(appointmentTime);
+        appointment.setReason(reason);
+        appointment.setStatus(Status.REQUESTED);
+        appointmentDao.create(appointment);
+
+        log(actor, "BOOK_APPOINTMENT_FOR_PATIENT", "Appointment", appointment.getId(), "Booked appointment for " + patient.getName() + " with Dr. " + doctor.getName());
+        return appointment;
+
+    }
+
     /**
      * Cancels an appointment.
-     * 
-     * Patients are only allowed to cancel their own appointments.
-     * Cancelled or completed appointments cannot be cancelled again.
-     * 
+     *
+     * Patients are only allowed to cancel their own appointments. Cancelled or
+     * completed appointments cannot be cancelled again.
+     *
      * @param actor
      * @param appointmentId
-     * @throws AuthException 
+     * @throws AuthException
      */
     public void cancelAppointment(User actor, Long appointmentId) throws AuthException {
         Appointment appointment = requireAppointment(appointmentId);
@@ -144,16 +170,15 @@ public class AppointmentService {
         log(actor, "CANCEL_APPOINTMENT", "Appointment", appointmentId, "Appointment cancelled");
     }
 
-    
     /**
      * Reschedules an existing appointment.
-     * 
+     *
      * @param actor
      * @param appointmentId
      * @param newScheduleId
      * @param newDate
      * @param newTime
-     * @throws AuthException 
+     * @throws AuthException
      */
     public void rescheduleAppointment(User actor, Long appointmentId, Long newScheduleId, Date newDate, Date newTime)
             throws AuthException {
@@ -210,10 +235,11 @@ public class AppointmentService {
     // ---- helpers ----
     /**
      * Validates appointment date , day, time
+     *
      * @param schedule
      * @param date
      * @param time
-     * @throws AuthException 
+     * @throws AuthException
      */
     private void validateSlot(DoctorSchedule schedule, Date date, Date time) throws AuthException {
         if (date == null || time == null) {
@@ -234,11 +260,11 @@ public class AppointmentService {
 
     /**
      * Ensures the selected schedule has not reached its maximum capacity.
-     * 
+     *
      * @param schedule
      * @param date
      * @param excludeAppointmentId
-     * @throws AuthException 
+     * @throws AuthException
      */
     private void ensureCapacity(DoctorSchedule schedule, Date date, Long excludeAppointmentId) throws AuthException {
         long booked = appointmentDao.countActiveBookings(schedule.getId(), date);
@@ -251,9 +277,10 @@ public class AppointmentService {
     }
 
     /**
-     * Checks weather the supplied date is before today. 
+     * Checks weather the supplied date is before today.
+     *
      * @param date
-     * @return 
+     * @return
      */
     private boolean isPastDate(Date date) {
         Calendar today = Calendar.getInstance();
@@ -266,8 +293,9 @@ public class AppointmentService {
 
     /**
      * Converts a date into the application's DayOfWeek enum.
+     *
      * @param date
-     * @return 
+     * @return
      */
     private DoctorSchedule.DayOfWeek dayOfWeekOf(Date date) {
         Calendar cal = Calendar.getInstance();
@@ -278,10 +306,10 @@ public class AppointmentService {
 
     /**
      * Determines weather two dates falls on the same calender day.
-     * 
+     *
      * @param a
      * @param b
-     * @return 
+     * @return
      */
     private boolean sameDay(Date a, Date b) {
         Calendar ca = Calendar.getInstance();
@@ -293,9 +321,9 @@ public class AppointmentService {
 
     /**
      * Converts Date object into minutes since midnight
-     * 
+     *
      * @param date
-     * @return 
+     * @return
      */
     private int timeOfDay(Date date) {
         Calendar cal = Calendar.getInstance();
@@ -305,20 +333,20 @@ public class AppointmentService {
 
     /**
      * Returns the role name of the logged-in user.
-     * 
+     *
      * @param user
-     * @return 
+     * @return
      */
     private String roleName(User user) {
         return (user.getRole() != null) ? user.getRole().getName() : null;
     }
 
     /**
-     * Retrieves the patient profile associated with the user account 
-     * 
+     * Retrieves the patient profile associated with the user account
+     *
      * @param userId
      * @return
-     * @throws AuthException 
+     * @throws AuthException
      */
     private Patient requirePatientForUser(Long userId) throws AuthException {
         Patient patient = patientDao.findByUserId(userId);
@@ -330,9 +358,10 @@ public class AppointmentService {
 
     /**
      * Retrieves appointment by Id or throws exception
+     *
      * @param appointmentId
      * @return
-     * @throws AuthException 
+     * @throws AuthException
      */
     private Appointment requireAppointment(Long appointmentId) throws AuthException {
         Appointment appointment = appointmentDao.findById(appointmentId);
@@ -344,11 +373,12 @@ public class AppointmentService {
 
     /**
      * Creates an audit log for appointment related actions.
+     *
      * @param actor
      * @param action
      * @param entityName
      * @param entityId
-     * @param details 
+     * @param details
      */
     private void log(User actor, String action, String entityName, Long entityId, String details) {
         ActivityLog entry = new ActivityLog();

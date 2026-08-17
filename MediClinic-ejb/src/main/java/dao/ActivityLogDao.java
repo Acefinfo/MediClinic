@@ -7,6 +7,7 @@ package dao;
 
 import entity.ActivityLog;
 import java.util.List;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,6 +18,7 @@ import javax.persistence.PersistenceContext;
  */
 
 @Stateless
+@PermitAll
 public class ActivityLogDao {
     @PersistenceContext(unitName = "um_mediclinicdb")
     private EntityManager em;
@@ -41,6 +43,16 @@ public class ActivityLogDao {
     public List<ActivityLog> findRecent(int maxResults) {
         return em.createQuery("SELECT a FROM ActivityLog a ORDER BY a.timestamp DESC", ActivityLog.class)
                 .setMaxResults(maxResults)
+                .getResultList();
+    }
+    
+    /**
+     * Retrieves every activity log record, newest first. 
+     * Used by the admin server
+     * @return 
+     */
+    public List<ActivityLog> findAll() {
+        return em.createQuery("SELECT a FROM ActivityLog a ORDER BY a.timestamp DESC", ActivityLog.class)
                 .getResultList();
     }
 }

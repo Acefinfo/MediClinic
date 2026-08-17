@@ -7,6 +7,7 @@ package com.mycompany;
 
 import entity.User;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -28,8 +29,14 @@ public class AdminStaffBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // Stores all staff accounts displayed on the page
+    // Stores all staff accounts displayed on the page after search filter.
     private List<User> staffList;
+
+    private List<User> allStaff;
+
+    // Search / filter fields
+    private String searchKeyword;
+    private String searchRole = "ALL";
 
     // Fields used when creating a new staff account
     private String name;
@@ -63,7 +70,60 @@ public class AdminStaffBean implements Serializable {
      * Retrieves all staff account from the database
      */
     public void loadStaff() {
-        staffList = adminUserService.listAllStaff();
+        allStaff = adminUserService.listAllStaff();
+        applyFilter();
+    }
+
+    /**
+     * Filters the staff list by the current keyword (matched against name,
+     * email, and phone) and/or the selected role. Called on demand from the
+     * search button.
+     */
+    public void search() {
+        applyFilter();
+    }
+
+    /**
+     * Clears the keyword and role filter, restoring the full staff list.
+     */
+    public void clearSearch() {
+        searchKeyword = null;
+        searchRole = "ALL";
+        applyFilter();
+    }
+
+    /**
+     * Applies the current keyword role filter on top of the staff list.
+     */
+    private void applyFilter() {
+        if (allStaff == null) {
+            staffList = null;
+            return;
+        }
+
+        String keyword = (searchKeyword != null) ? searchKeyword.trim().toLowerCase() : "";
+        boolean roleFilterActive = searchRole != null && !"ALL".equals(searchRole);
+
+        if (keyword.isEmpty() && !roleFilterActive) {
+            staffList = allStaff;
+            return;
+        }
+
+        List<User> filtered = new java.util.ArrayList<>();
+        for (User u : allStaff) {
+            boolean matchesKeyword = keyword.isEmpty()
+                    || (u.getName() != null && u.getName().toLowerCase().contains(keyword))
+                    || (u.getEmail() != null && u.getEmail().toLowerCase().contains(keyword))
+                    || (u.getPhone() != null && u.getPhone().toLowerCase().contains(keyword));
+
+            boolean matchesRole = !roleFilterActive
+                    || (u.getRole() != null && searchRole.equals(u.getRole().getName()));
+
+            if (matchesKeyword && matchesRole) {
+                filtered.add(u);
+            }
+        }
+        staffList = filtered;
     }
 
     /**
@@ -224,6 +284,22 @@ public class AdminStaffBean implements Serializable {
 
     public void setEditRoleName(String editRoleName) {
         this.editRoleName = editRoleName;
+    }
+
+    public String getSearchKeyword() {
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(String searchKeyword) {
+        this.searchKeyword = searchKeyword;
+    }
+
+    public String getSearchRole() {
+        return searchRole;
+    }
+
+    public void setSearchRole(String searchRole) {
+        this.searchRole = searchRole;
     }
 
     /**

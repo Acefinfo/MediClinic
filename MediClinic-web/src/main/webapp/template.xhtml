@@ -253,6 +253,8 @@ and open the template in the editor.
                              rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
                     <h:link outcome="/receptionist/invoices" value="Invoices"
                              rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                     <h:link outcome="/receptionist/book-appointment" value="Book Appointment"
+                             rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
 
                     <h:link outcome="/admin/staff-list" value="Staff"
                              rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
@@ -265,6 +267,8 @@ and open the template in the editor.
                     <h:link outcome="/admin/doctor-schedules" value="Doctor Schedules"
                              rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
                     <h:link outcome="/admin/reports" value="Reports"
+                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                    <h:link outcome="/admin/server-logs" value="Server Logs"
                              rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
 
                     <h:link outcome="/profile-photo" value="Profile Photo"/>

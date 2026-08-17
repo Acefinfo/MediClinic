@@ -6,11 +6,11 @@ and open the template in the editor.
 -->
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                 xmlns:p="http://primefaces.org/ui"
-                 template="/template.xhtml">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/template.xhtml">
 
     <ui:define name="title">Manage Staff</ui:define>
 
@@ -63,6 +63,21 @@ and open the template in the editor.
 
         <h:form id="listForm">
             <p:panel header="Staff Accounts">
+
+                <p:inputText value="#{adminStaffBean.searchKeyword}" placeholder="Search by name, email, or phone" style="width:260px;"/>
+
+                <p:selectOneMenu value="#{adminStaffBean.searchRole}" style="margin-left:8px;">
+                    <f:selectItem itemLabel="All Roles" itemValue="ALL"/>
+                    <f:selectItem itemLabel="Admin" itemValue="ADMIN"/>
+                    <f:selectItem itemLabel="Doctor" itemValue="DOCTOR"/>
+                    <f:selectItem itemLabel="Receptionist" itemValue="RECEPTIONIST"/>
+                </p:selectOneMenu>
+
+                <p:commandButton value="Search" icon="pi pi-search" action="#{adminStaffBean.search}" update="listForm" style="margin-left:8px;"/>
+                <p:commandButton value="Reset" icon="pi pi-times" action="#{adminStaffBean.clearSearch}" update="listForm"/>
+
+                <br/><br/>
+
                 <p:dataTable var="staff" value="#{adminStaffBean.staffList}" rowKey="#{staff.id}">
 
                     <p:column headerText="Name">
@@ -87,15 +102,15 @@ and open the template in the editor.
 
                     <p:column headerText="Actions">
                         <p:commandButton value="Edit" icon="pi pi-pencil"
-                                          actionListener="#{adminStaffBean.startEdit(staff)}"
-                                          oncomplete="PF('editDialog').show()" update=":editForm" process="@this"/>
+                                         actionListener="#{adminStaffBean.startEdit(staff)}"
+                                         oncomplete="PF('editDialog').show()" update=":editForm" process="@this"/>
 
                         <p:commandButton value="#{staff.status eq 'ACTIVE' ? 'Deactivate' : 'Reactivate'}"
-                                          icon="pi pi-power-off"
-                                          action="#{adminStaffBean.toggleStatus(staff)}" update="listForm"/>
+                                         icon="pi pi-power-off"
+                                         action="#{adminStaffBean.toggleStatus(staff)}" update="listForm"/>
 
                         <p:commandButton value="Reset Password" icon="pi pi-key"
-                                          action="#{adminStaffBean.resetPassword(staff)}" update="createForm:messages"/>
+                                         action="#{adminStaffBean.resetPassword(staff)}" update="createForm:messages"/>
                     </p:column>
                 </p:dataTable>
             </p:panel>
@@ -119,7 +134,7 @@ and open the template in the editor.
 
                 <br/>
                 <p:commandButton value="Save" action="#{adminStaffBean.saveEdit}"
-                                  oncomplete="PF('editDialog').hide()" update=":listForm"/>
+                                 oncomplete="PF('editDialog').hide()" update=":listForm"/>
             </h:form>
         </p:dialog>
     </ui:define>

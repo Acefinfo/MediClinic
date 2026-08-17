@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/template.xhtml">
+
+    <ui:define name="title">Book Appointment</ui:define>
+
+    <ui:define name="content">
+        <h1 class="mc-page-title">Book Appointment for a Patient</h1>
+
+        <h:form id="patientForm">
+            <p:panel header="Step 1 — Select Patient">
+
+                <h:panelGroup rendered="#{receptionistBookingBean.selectedPatient eq null}">
+                    <p:inputText value="#{receptionistBookingBean.patientSearchKeyword}"
+                                 placeholder="Search by name, phone, or email" style="width:280px;"/>
+                    <p:commandButton value="Search" icon="pi pi-search"
+                                     action="#{receptionistBookingBean.searchPatients}" update="patientForm"/>
+                    <p:commandButton value="Reset" icon="pi pi-times"
+                                     action="#{receptionistBookingBean.clearPatientSearch}" update="patientForm"/>
+
+                    <br/><br/>
+
+                    <p:dataTable var="patient" value="#{receptionistBookingBean.patients}" rowKey="#{patient.id}">
+                        <p:column headerText="Name"><h:outputText value="#{patient.name}"/></p:column>
+                        <p:column headerText="Phone"><h:outputText value="#{patient.phone}"/></p:column>
+                        <p:column headerText="Email"><h:outputText value="#{patient.user.email}"/></p:column>
+                        <p:column headerText="Actions">
+                            <p:commandButton value="Select" icon="pi pi-check"
+                                             action="#{receptionistBookingBean.selectPatient(patient)}"
+                                             update="patientForm bookForm"/>
+                        </p:column>
+                    </p:dataTable>
+
+                    <h:outputText value="No patients found. Try a different search, or register a walk-in patient first."
+                                  rendered="#{empty receptionistBookingBean.patients}" styleClass="mc-muted"/>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{receptionistBookingBean.selectedPatient ne null}">
+                    <span class="mc-muted">Booking for:</span>
+                    <strong>#{receptionistBookingBean.selectedPatient.name}</strong>
+                    (#{receptionistBookingBean.selectedPatient.phone})
+
+                    <p:commandButton value="Change Patient" icon="pi pi-user-edit"
+                                     action="#{receptionistBookingBean.clearSelectedPatient}"
+                                     update="patientForm bookForm" style="margin-left:12px;"/>
+                </h:panelGroup>
+
+            </p:panel>
+        </h:form>
+
+        <br/>
+
+        <h:form id="bookForm">
+            <h:panelGroup rendered="#{receptionistBookingBean.selectedPatient ne null}">
+                <p:growl id="messages" showDetail="true"/>
+
+                <p:panel header="Step 2 — Appointment Details">
+                    <p:panelGrid id="bookGrid" columns="2">
+
+                        <p:outputLabel for="doctor" value="Doctor"/>
+                        <p:selectOneMenu id="doctor" value="#{receptionistBookingBean.selectedDoctorId}">
+                            <f:selectItem itemLabel="-- Select a Doctor --" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{receptionistBookingBean.doctors}" var="d" itemLabel="#{d.name} (#{d.specialization})" itemValue="#{d.id}"/>
+                            <p:ajax listener="#{receptionistBookingBean.onDoctorChange}" update="bookGrid"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="schedule" value="Available Slot"/>
+                        <p:selectOneMenu id="schedule" value="#{receptionistBookingBean.selectedScheduleId}">
+                            <f:selectItem itemLabel="-- Select a Slot --" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{receptionistBookingBean.scheduleItems}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="date" value="Date"/>
+                        <p:calendar id="date" value="#{receptionistBookingBean.appointmentDate}" pattern="yyyy-MM-dd" navigator="true"/>
+
+                        <p:outputLabel for="time" value="Time"/>
+                        <p:calendar id="time" value="#{receptionistBookingBean.appointmentTime}" timeOnly="true" pattern="HH:mm"/>
+
+                        <p:outputLabel for="reason" value="Reason"/>
+                        <p:inputTextarea id="reason" value="#{receptionistBookingBean.reason}" rows="3"/>
+                    </p:panelGrid>
+
+                    <br/>
+                    <p:commandButton value="Book Appointment" icon="pi pi-calendar-plus"
+                                      action="#{receptionistBookingBean.book}" update="bookForm"/>
+                </p:panel>
+            </h:panelGroup>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
