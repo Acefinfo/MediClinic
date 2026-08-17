@@ -22,11 +22,9 @@ and open the template in the editor.
 
         <h:form id="logsForm">
             <p:panel header="Activity Log">
-                <p:commandButton value="Refresh" icon="pi pi-refresh" action="#{serverLogsBean.refresh}"
-                                  update="logsForm" style="margin-bottom:12px;"/>
 
                 <p:dataTable var="log" value="#{serverLogsBean.logs}" rowKey="#{log.id}"
-                             paginator="true" rows="10"
+                             lazy="true" paginator="true" rows="7"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                              currentPageReportTemplate="Page {currentPage} of {totalPages} ({totalRecords} entries)">
 
@@ -54,7 +52,6 @@ and open the template in the editor.
 
                 </p:dataTable>
 
-                <h:outputText value="No activity has been recorded yet." rendered="#{empty serverLogsBean.logs}" styleClass="mc-muted"/>
             </p:panel>
         </h:form>
     </ui:define>

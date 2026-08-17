@@ -55,4 +55,28 @@ public class ActivityLogDao {
         return em.createQuery("SELECT a FROM ActivityLog a ORDER BY a.timestamp DESC", ActivityLog.class)
                 .getResultList();
     }
+    
+    /**
+     * Counts all the activity Log recorded by the system.
+     * 
+     * @return 
+     */
+    public long countAll() {
+        return em.createQuery("SELECT COUNT(a) FROM ActivityLog a", Long.class)
+                .getSingleResult();
+    }
+    
+    /**
+     * Retrieves a single page of activity log records, newest first.
+     * 
+     * @param first
+     * @param pageSize
+     * @return 
+     */
+    public List<ActivityLog> findPage (int first, int pageSize){
+        return em.createQuery("SELECT a FROM ActivityLog a ORDER BY a.timestamp DESC", ActivityLog.class)
+                .setFirstResult(first)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
 }

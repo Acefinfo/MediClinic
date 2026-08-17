@@ -7,6 +7,7 @@ package dao;
 
 import entity.Doctor;
 import java.util.List;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -16,6 +17,7 @@ import javax.persistence.PersistenceContext;
  *
  * @author acefonfo
  */
+@PermitAll
 @Stateless
 public class DoctorDao {
 
