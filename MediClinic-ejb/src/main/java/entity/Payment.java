@@ -31,7 +31,7 @@ public class Payment implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public enum Method {
-        CASH, CARD, INSURANCE, ONLINE
+        CASH, CARD, ONLINE, ESEWA, KHALTI
     }
 
     @Id

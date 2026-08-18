@@ -6,11 +6,11 @@ and open the template in the editor.
 -->
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                 xmlns:p="http://primefaces.org/ui"
-                 template="/template.xhtml">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/template.xhtml">
 
     <ui:define name="title">My Billing</ui:define>
 
@@ -45,12 +45,13 @@ and open the template in the editor.
 
                     <p:column headerText="Actions">
                         <p:commandButton value="Pay Online" icon="pi pi-credit-card"
-                                          action="#{patientBillingBean.payOnline(i)}" update="myBillForm"
-                                          rendered="#{i.status == 'UNPAID' or i.status == 'PARTIALLY_PAID'}"/>
+                                         actionListener="#{patientBillingBean.select(i)}"
+                                         oncomplete="PF('payDialog').show()" update=":payDialogForm" process="@this"
+                                         rendered="#{i.status == 'UNPAID' or i.status == 'PARTIALLY_PAID'}"/>
                         <p:commandButton value="View Receipt" icon="pi pi-file"
-                                          actionListener="#{patientBillingBean.select(i)}"
-                                          oncomplete="PF('receiptDialog').show()" update=":receiptDialogForm" process="@this"
-                                          rendered="#{i.status == 'PAID'}"/>
+                                         actionListener="#{patientBillingBean.select(i)}"
+                                         oncomplete="PF('receiptDialog').show()" update=":receiptDialogForm" process="@this"
+                                         rendered="#{i.status == 'PAID'}"/>
 
                         <h:outputLink value="#{request.contextPath}/invoice/#{i.id}" style="margin-left: 8px" rendered="#{i.status == 'PAID'}">
                             <h:outputText value="Download PDF"/>
@@ -92,6 +93,41 @@ and open the template in the editor.
                 </p:dataTable>
             </h:form>
         </p:dialog>
+
+        <p:dialog header="Choose Payment Method" widgetVar="payDialog" modal="true" width="420">
+            <h:form id="payDialogForm">
+                <p:panelGrid columns="2" rendered="#{patientBillingBean.selectedInvoice ne null}">
+                    <p:outputLabel value="Invoice #"/>
+                    <h:outputText value="#{patientBillingBean.selectedInvoice.invoiceNumber}"/>
+                    <p:outputLabel value="Amount Due"/>
+                    <h:outputText value="#{patientBillingBean.selectedInvoice.totalAmount}"/>
+                </p:panelGrid>
+
+                <p:separator/>
+
+                <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+
+                    <p:commandButton value="Pay Online" icon="pi pi-credit-card" style="width:100%"
+                                     action="#{patientBillingBean.payOnline(patientBillingBean.selectedInvoice)}"
+                                     oncomplete="PF('payDialog').hide()" update=":myBillForm"/>
+
+                    <h:outputLink value="#{request.contextPath}/payment/esewa/initiate/#{patientBillingBean.selectedInvoice.id}"
+                                  style="width:100%; text-align:center; display:block; background:#60bb46; color:#fff; padding:10px; border-radius:4px; text-decoration:none;"
+                                  rendered="#{patientBillingBean.selectedInvoice ne null}">
+                        Pay with eSewa
+                    </h:outputLink>
+
+                    <h:outputLink value="#{request.contextPath}/payment/khalti/initiate/#{patientBillingBean.selectedInvoice.id}"
+                                  style="width:100%; text-align:center; display:block; background:#5c2d91; color:#fff; padding:10px; border-radius:4px; text-decoration:none;"
+                                  rendered="#{patientBillingBean.selectedInvoice ne null}">
+                        Pay with Khalti
+                    </h:outputLink>
+
+                </div>
+            </h:form>
+        </p:dialog>
+
+
     </ui:define>
 
 </ui:composition>

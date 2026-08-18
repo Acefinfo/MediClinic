@@ -25,13 +25,12 @@ import service.BillingService;
  *
  * @author acefonfo
  */
-
 @ManagedBean(name = "patientBillingBean")
 @ViewScoped
-public class PatientBillingBean implements Serializable{
-    
+public class PatientBillingBean implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     private List<Invoice> myInvoices;
     private Invoice selectedInvoice;
     private List<Payment> selectedPayments;
@@ -40,43 +39,54 @@ public class PatientBillingBean implements Serializable{
     private BillingService billingService;
     @EJB
     private PatientDao patientDao;
-    
-    @ManagedProperty(value =  "#{loggedInUser}")
+
+    @ManagedProperty(value = "#{loggedInUser}")
     private LoggedInUser loggedInUser;
-    
+
     @PostConstruct
-    public void init(){
+    public void init() {
         loadMyInvoices();
+        String esewaStatus = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("esewaStatus");
+        if ("success".equals(esewaStatus)) {
+            addMessage(FacesMessage.SEVERITY_INFO, "Success", "eSewa payment successful.");
+        } else if ("failed".equals(esewaStatus)) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Failed", "eSewa payment could not be completed.");
+        } else if ("success".equals(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("khaltiStatus"))) {
+            addMessage(FacesMessage.SEVERITY_INFO, "Success", "Khalti payment successful.");
+        } else if ("failed".equals(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("khaltiStatus"))) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Khalti payment could not be completed.");
+        }
+        
     }
-    
-    public void loadMyInvoices(){
+
+    public void loadMyInvoices() {
 //        Patient patient = patientDao.findById(loggedInUser.getUser().getId());
         Patient patient = patientDao.findByUserId(loggedInUser.getUser().getId());
-        
+
         if (patient != null) {
             myInvoices = billingService.findInvoicesForPatient(patient.getId());
         }
     }
-    
+
     public void select(Invoice invoice) {
         selectedInvoice = invoice;
         selectedPayments = billingService.findPaymentsForInvoice(invoice.getId());
     }
-    
-    public void payOnline(Invoice invoice){
-        try{
+
+    public void payOnline(Invoice invoice) {
+        try {
             billingService.payOnline(loggedInUser.getUser(), invoice.getId());
             loadMyInvoices();
             addMessage(FacesMessage.SEVERITY_INFO, "Success", "Payment successful.");
-        }catch (AuthException e){
+        } catch (AuthException e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Failed", e.getMessage());
         }
     }
-    
+
     private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }
-    
+
     public List<Invoice> getMyInvoices() {
         return myInvoices;
     }
@@ -92,6 +102,5 @@ public class PatientBillingBean implements Serializable{
     public void setLoggedInUser(LoggedInUser loggedInUser) {
         this.loggedInUser = loggedInUser;
     }
-    
-    
+
 }
