@@ -14,6 +14,7 @@ and open the template in the editor.
 
     <f:metadata>
         <f:viewParam name="patientId" value="#{doctorPatientHistoryBean.patientId}"/>
+        <f:event type="preRenderView" listener="#{doctorPatientHistoryBean.load}"/>
     </f:metadata>
 
     <ui:define name="title">Patient History</ui:define>
@@ -45,9 +46,6 @@ and open the template in the editor.
                     <p:outputLabel value="Gender" style="font-weight:bold"/>
                     <h:outputText value="#{doctorPatientHistoryBean.patient.gender}"/>
 
-                    <p:outputLabel value="Address" style="font-weight:bold"/>
-                    <h:outputText value="#{doctorPatientHistoryBean.patient.address}"/>
-
                     <p:outputLabel value="Allergies" style="font-weight:bold"/>
                     <h:outputText value="#{doctorPatientHistoryBean.patient.allergies}"
                                   rendered="#{not empty doctorPatientHistoryBean.patient.allergies}"/>
@@ -71,7 +69,7 @@ and open the template in the editor.
             <h1 class="mc-page-title" style="font-size:1.2em;">Consultation History</h1>
 
             <ui:repeat var="g" value="#{doctorPatientHistoryBean.groups}">
-                <p:panel style="margin-bottom:20px">
+                <p:panel style="margin-bottom:20px" toggleable="true" collapsed="true">
                     <f:facet name="header">
                         <h:outputText value="Consultation - #{g.consultation.consultationDate}">
                             <f:convertDateTime pattern="yyyy-MM-dd" timeZone="UTC"/>
