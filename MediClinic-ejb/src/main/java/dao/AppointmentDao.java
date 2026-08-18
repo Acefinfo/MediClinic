@@ -127,7 +127,7 @@ public class AppointmentDao {
                 "SELECT COUNT(a) FROM Appointment a WHERE a.schedule.id = :scheduleId AND a.appointmentDate = :date AND a.status IN :statuses",
                 Long.class)
                 .setParameter("scheduleId", scheduleId)
-                .setParameter("date", appointmentDate)
+                .setParameter("date", appointmentDate, TemporalType.DATE)
                 .setParameter("statuses", activeStatuses)
                 .getSingleResult();
     }
@@ -204,21 +204,21 @@ public class AppointmentDao {
                 .setParameter("status", Status.COMPLETED)
                 .getResultList();
     }
-    
+
     /**
      * A single doctor's appointments on one calender date
-     * 
+     *
      * @param doctorId
      * @param date
-     * @return 
+     * @return
      */
     public List<Appointment> findByDoctorIdAndDate(Long doctorId, Date date) {
-    return em.createQuery(
-            "SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :date ORDER BY a.appointmentTime",
-            Appointment.class)
-            .setParameter("doctorId", doctorId)
-            .setParameter("date", date, TemporalType.DATE)
-            .getResultList();
-}
+        return em.createQuery(
+                "SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :date ORDER BY a.appointmentTime",
+                Appointment.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("date", date, TemporalType.DATE)
+                .getResultList();
+    }
 
 }
