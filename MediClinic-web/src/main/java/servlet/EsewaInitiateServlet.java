@@ -27,20 +27,20 @@ import util.EsewaConfig;
  */
 @WebServlet("/payment/esewa/initiate/*")
 public class EsewaInitiateServlet extends HttpServlet {
-    
+
     @EJB
     private BillingService billingService;
 
     /**
      * Handles GET requests sent to this servlet.
-     * 
-     * The main purpose of this method is to start the eSewa payment process 
-     * for a specific invoice.
-     * 
+     *
+     * The main purpose of this method is to start the eSewa payment process for
+     * a specific invoice.
+     *
      * @param req
      * @param resp
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -83,34 +83,35 @@ public class EsewaInitiateServlet extends HttpServlet {
 
     /**
      * Escapes special HTML characters.
-     * 
-     * This is important when inserting values into HTML attributes.
-     * Without escaping, characters such as &, ", <, and > could
-     * cause invalid HTML or potentially create an HTML injection
-     * vulnerability.
-     * 
+     *
+     * This is important when inserting values into HTML attributes. Without
+     * escaping, characters such as &, ", <, and > could cause invalid HTML or
+     * potentially create an HTML injection vulnerability.
+     *
      * @param s
-     * @return 
+     * @return
      */
     private String escape(String s) {
-        if (s == null) return "";
+        if (s == null) {
+            return "";
+        }
         return s.replace("&", "&amp;").replace("\"", "&quot;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
     /**
      * Extracts the invoice Id from the servlet path.
-     * 
-     * Example:
-     * pathInfo = "/123"
      *
-     * The method removes the leading "/" and converts
-     * "123" into a Long value.
-     * 
+     * Example: pathInfo = "/123"
+     *
+     * The method removes the leading "/" and converts "123" into a Long value.
+     *
      * @param pathInfo
-     * @return 
+     * @return
      */
     private Long parseId(String pathInfo) {
-        if (pathInfo == null || pathInfo.length() < 2) return null;
+        if (pathInfo == null || pathInfo.length() < 2) {
+            return null;
+        }
         try {
             return Long.parseLong(pathInfo.substring(1));
         } catch (NumberFormatException e) {

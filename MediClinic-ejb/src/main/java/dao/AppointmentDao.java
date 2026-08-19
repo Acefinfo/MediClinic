@@ -113,7 +113,7 @@ public class AppointmentDao {
     }
 
     /**
-     * Counts active (non-cancelled, non-completed) bookings against a specific
+     * Counts active (non-canceled, non-completed) bookings against a specific
      * availability slot on a given date. Used to enforce the slot's
      * max-patients capacity.
      *
