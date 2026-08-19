@@ -16,194 +16,307 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title><ui:insert name="title">MediClinic</ui:insert></title>
 
+        <!-- Set theme BEFORE paint to avoid a flash of the wrong theme -->
+        <script>
+            (function () {
+                var saved = localStorage.getItem('mc-theme');
+                var theme = saved ? saved : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            })();
+        </script>
+
         <style type="text/css">
-            /* ===== Reset / base ===== */
-            html, body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
+            /* ===== Theme variables ===== */
+            :root {
+                --mc-bg: #f4f7f9;
+                --mc-text: #1e293b;
+                --mc-link: #0d9488;
+                --mc-link-hover: #0f766e;
+
+                --mc-header-bg: #1e293b;
+                --mc-header-text: #ffffff;
+                --mc-nav-text: #cbd5e1;
+                --mc-nav-hover-bg: rgba(255,255,255,0.08);
+
+                --mc-card-bg: #ffffff;
+                --mc-card-border: #e2e8f0;
+                --mc-muted: #64748b;
+
+                --mc-panel-title-bg: #f1f5f9;
+                --mc-shadow: rgba(0,0,0,0.04);
             }
+
+            html[data-theme="dark"] {
+                --mc-bg: #0f172a;
+                --mc-text: #e2e8f0;
+                --mc-link: #2dd4bf;
+                --mc-link-hover: #5eead4;
+
+                --mc-header-bg: #020617;
+                --mc-header-text: #f1f5f9;
+                --mc-nav-text: #94a3b8;
+                --mc-nav-hover-bg: rgba(255,255,255,0.06);
+
+                --mc-card-bg: #1e293b;
+                --mc-card-border: #334155;
+                --mc-muted: #94a3b8;
+
+                --mc-panel-title-bg: #1e293b;
+                --mc-shadow: rgba(0,0,0,0.4);
+            }
+
+            /* ===== Reset / base ===== */
+            html, body { height: 100%; margin: 0; padding: 0; }
             body {
                 font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-                background-color: #f4f7f9;
-                color: #1e293b;
+                background-color: var(--mc-bg);
+                color: var(--mc-text);
+                transition: background-color 0.2s ease, color 0.2s ease;
             }
-            a { color: #0d9488; text-decoration: none; }
-            a:hover { color: #0f766e; text-decoration: underline; }
+            a { color: var(--mc-link); text-decoration: none; }
+            a:hover { color: var(--mc-link-hover); text-decoration: underline; }
 
-            /* ===== Page shell (keeps footer at bottom) ===== */
-            .mc-page {
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
+            /* ===== Page shell ===== */
+            .mc-page { min-height: 100vh; display: flex; flex-direction: column; }
             .mc-main {
-                flex: 1 0 auto;
-                width: 100%;
-                box-sizing: border-box;
-                padding: 24px 32px 48px 32px;
-                display: flex;
-                flex-direction: column;
+                flex: 1 0 auto; width: 100%; box-sizing: border-box;
+                padding: 24px 32px 48px 32px; display: flex; flex-direction: column;
             }
 
             /* ===== Header ===== */
             .mc-header {
                 flex-shrink: 0;
-                background-color: #1e293b;
-                color: #ffffff;
+                background-color: var(--mc-header-bg);
+                color: var(--mc-header-text);
                 padding: 0 32px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                flex-wrap: wrap;
+                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             }
-            .mc-brand {
-                display: flex;
-                align-items: center;
-                padding: 14px 0;
-            }
-            .mc-brand a {
-                color: #ffffff;
-                font-size: 1.4em;
-                font-weight: 700;
-                letter-spacing: 0.5px;
-            }
+            .mc-brand { display: flex; align-items: center; padding: 14px 0; }
+            .mc-brand a { color: var(--mc-header-text); font-size: 1.4em; font-weight: 700; letter-spacing: 0.5px; }
             .mc-brand a:hover { color: #5eead4; text-decoration: none; }
             .mc-brand-plus { color: #2dd4bf; }
 
-            .mc-nav {
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-                gap: 4px;
-                padding: 8px 0;
-            }
+            .mc-nav { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; padding: 8px 0; }
             .mc-nav a, .mc-nav .mc-navlink {
-                color: #cbd5e1;
-                padding: 8px 12px;
-                border-radius: 4px;
-                font-size: 0.95em;
-                font-weight: 500;
+                color: var(--mc-nav-text); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; font-weight: 500;
             }
-            .mc-nav a:hover {
-                color: #ffffff;
-                background-color: rgba(255,255,255,0.08);
-                text-decoration: none;
-            }
+            .mc-nav a:hover { color: var(--mc-header-text); background-color: var(--mc-nav-hover-bg); text-decoration: none; }
             .mc-nav .mc-role-badge {
-                color: #0f172a;
-                background-color: #2dd4bf;
-                padding: 4px 10px;
-                border-radius: 12px;
-                font-size: 0.78em;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-left: 8px;
+                color: #0f172a; background-color: #2dd4bf; padding: 4px 10px; border-radius: 12px;
+                font-size: 0.78em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px;
             }
-            .mc-nav .mc-logout-btn {
-                margin-left: 8px;
-            }
+            .mc-nav .mc-logout-btn { margin-left: 8px; }
             .mc-nav .mc-logout-btn .ui-button {
-                background-color: transparent !important;
-                border: 1px solid #475569 !important;
-                color: #e2e8f0 !important;
-                font-size: 0.85em !important;
-                padding: 6px 14px !important;
+                background-color: transparent !important; border: 1px solid #475569 !important;
+                color: #e2e8f0 !important; font-size: 0.85em !important; padding: 6px 14px !important;
             }
             .mc-nav .mc-logout-btn .ui-button:hover {
-                background-color: #dc2626 !important;
-                border-color: #dc2626 !important;
-                color: #ffffff !important;
+                background-color: #dc2626 !important; border-color: #dc2626 !important; color: #ffffff !important;
             }
+
+            /* ===== Theme toggle button ===== */
+            .mc-theme-toggle {
+                background: transparent; border: 1px solid #475569; color: var(--mc-nav-text);
+                border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 0.95em;
+                margin-left: 8px; display: inline-flex; align-items: center;
+            }
+            .mc-theme-toggle:hover { background-color: var(--mc-nav-hover-bg); }
 
             /* ===== Footer ===== */
             .mc-footer {
-                flex-shrink: 0;
-                background-color: #1e293b;
-                color: #94a3b8;
-                text-align: center;
-                padding: 18px 16px;
-                font-size: 0.85em;
+                flex-shrink: 0; background-color: var(--mc-header-bg); color: #94a3b8;
+                text-align: center; padding: 18px 16px; font-size: 0.85em;
             }
             .mc-footer a { color: #5eead4; }
-            .mc-footer .mc-footer-links {
-                margin-bottom: 6px;
-            }
-            .mc-footer .mc-footer-links a {
-                margin: 0 10px;
-                color: #cbd5e1;
-            }
+            .mc-footer .mc-footer-links { margin-bottom: 6px; }
+            .mc-footer .mc-footer-links a { margin: 0 10px; color: var(--mc-nav-text); }
             .mc-footer .mc-footer-links a:hover { color: #ffffff; }
 
             /* ===== Shared content helpers ===== */
-            .mc-center-wrap {
-                flex: 1 0 auto;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 40px 16px;
-                box-sizing: border-box;
-            }
-            .mc-card {
-                width: 100%;
-                max-width: 420px;
-            }
-            .mc-page-title {
-                font-size: 1.5em;
-                font-weight: 700;
-                color: #1e293b;
-                margin: 0 0 18px 0;
-            }
+            .mc-center-wrap { flex: 1 0 auto; display: flex; align-items: center; justify-content: center; padding: 40px 16px; box-sizing: border-box; }
+            .mc-card { width: 100%; max-width: 420px; }
+            .mc-page-title { font-size: 1.5em; font-weight: 700; color: var(--mc-text); margin: 0 0 18px 0; }
             .mc-section {
-                background-color: #ffffff;
-                border: 1px solid #e2e8f0;
-                border-radius: 8px;
-                padding: 20px;
-                margin-bottom: 20px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+                background-color: var(--mc-card-bg); border: 1px solid var(--mc-card-border); border-radius: 8px;
+                padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px var(--mc-shadow);
             }
-            .mc-muted { color: #64748b; font-size: 0.9em; }
-            .mc-stat-value { font-size: 1.8em; font-weight: 700; color: #0d9488; }
+            .mc-muted { color: var(--mc-muted); font-size: 0.9em; }
+            .mc-stat-value { font-size: 1.8em; font-weight: 700; color: var(--mc-link); }
             .mc-link-list a { display: inline-block; margin: 4px 0; }
 
-            /* ===== PrimeFaces overrides so components match the theme ===== */
+            /* ===== PrimeFaces overrides ===== */
             .ui-panel, .ui-panel .ui-panel-content {
-                border-radius: 8px !important;
-                border-color: #e2e8f0 !important;
+                border-radius: 8px !important; border-color: var(--mc-card-border) !important;
+                background-color: var(--mc-card-bg) !important; color: var(--mc-text) !important;
             }
             .ui-panel .ui-panel-titlebar {
-                background-color: #f1f5f9 !important;
-                border-color: #e2e8f0 !important;
-                color: #1e293b !important;
-                font-weight: 600 !important;
-                border-radius: 8px 8px 0 0 !important;
+                background-color: var(--mc-panel-title-bg) !important; border-color: var(--mc-card-border) !important;
+                color: var(--mc-text) !important; font-weight: 600 !important; border-radius: 8px 8px 0 0 !important;
             }
             .ui-button, .ui-commandlink.ui-button, .ui-button.ui-widget {
-                background-color: #0d9488 !important;
-                border-color: #0d9488 !important;
+                background-color: #0d9488 !important; border-color: #0d9488 !important;
             }
-            .ui-button:enabled:hover {
-                background-color: #0f766e !important;
-                border-color: #0f766e !important;
+            .ui-button:enabled:hover { background-color: #0f766e !important; border-color: #0f766e !important; }
+            .ui-datatable thead th { background-color: var(--mc-panel-title-bg) !important; color: var(--mc-text) !important; }
+            .ui-datatable tbody td { background-color: var(--mc-card-bg) !important; color: var(--mc-text) !important; }
+            .ui-state-highlight { background-color: #ccfbf1 !important; border-color: #5eead4 !important; }
+            .ui-messages-error, .ui-message-error { border-color: #dc2626 !important; color: #991b1b !important; }
+            .ui-messages-info, .ui-message-info { border-color: #0d9488 !important; color: #0f766e !important; }
+            .ui-inputfield, input.ui-inputfield, textarea.ui-inputfield {
+                background-color: var(--mc-card-bg) !important; color: var(--mc-text) !important; border-color: var(--mc-card-border) !important;
+                
             }
-            .ui-datatable thead th {
-                background-color: #f1f5f9 !important;
-                color: #1e293b !important;
-            }
-            .ui-state-highlight {
-                background-color: #ccfbf1 !important;
-                border-color: #5eead4 !important;
-            }
-            .ui-messages-error, .ui-message-error {
-                border-color: #dc2626 !important;
-                color: #991b1b !important;
-            }
-            .ui-messages-info, .ui-message-info {
-                border-color: #0d9488 !important;
-                color: #0f766e !important;
-            }
+                    /* ===== PrimeFaces dark-mode coverage (base widget classes + overlays) ===== */
+
+        /* Base widget content/header used by dataTable, panel, dialog, fieldset, etc. */
+        .ui-widget-content {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-widget-header {
+            background-color: var(--mc-panel-title-bg) !important;
+            color: var(--mc-text) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-widget {
+            color: var(--mc-text) !important;
+        }
+
+        /* Row striping */
+        .ui-datatable-odd, .ui-datatable tbody tr.ui-datatable-odd,
+        .ui-datatable-even, .ui-datatable tbody tr.ui-datatable-even {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+        }
+        .ui-datatable tbody tr:hover { background-color: var(--mc-panel-title-bg) !important; }
+
+        /* Paginator (bottom/top of dataTable) */
+        .ui-paginator, .ui-paginator-bottom, .ui-paginator-top {
+            background-color: var(--mc-card-bg) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-paginator .ui-paginator-page, .ui-paginator .ui-paginator-next,
+        .ui-paginator .ui-paginator-prev, .ui-paginator .ui-paginator-first,
+        .ui-paginator .ui-paginator-last {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-paginator .ui-state-active {
+            background-color: #0d9488 !important;
+            color: #ffffff !important;
+        }
+
+        /* Dialog (p:dialog) */
+        .ui-dialog {
+            background-color: var(--mc-card-bg) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-dialog .ui-dialog-titlebar {
+            background-color: var(--mc-panel-title-bg) !important;
+            color: var(--mc-text) !important;
+        }
+        .ui-dialog .ui-dialog-content {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+        }
+        .ui-dialog-mask, .ui-widget-overlay {
+            background-color: rgba(0,0,0,0.55) !important;
+        }
+
+        /* selectOneMenu dropdown panel (renders as an overlay outside .mc-page) */
+        .ui-selectonemenu {
+            background-color: var(--mc-card-bg) !important;
+            border-color: var(--mc-card-border) !important;
+            color: var(--mc-text) !important;
+        }
+        .ui-selectonemenu-panel {
+            background-color: var(--mc-card-bg) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-selectonemenu-items .ui-selectonemenu-item {
+            color: var(--mc-text) !important;
+            background-color: var(--mc-card-bg) !important;
+        }
+        .ui-selectonemenu-items .ui-selectonemenu-item.ui-state-highlight {
+            background-color: #0d9488 !important;
+            color: #ffffff !important;
+        }
+
+        /* Calendar / datepicker popup (also an overlay) */
+        .ui-datepicker {
+            background-color: var(--mc-card-bg) !important;
+            border-color: var(--mc-card-border) !important;
+            color: var(--mc-text) !important;
+        }
+        .ui-datepicker .ui-datepicker-header {
+            background-color: var(--mc-panel-title-bg) !important;
+            color: var(--mc-text) !important;
+        }
+        .ui-datepicker table td, .ui-datepicker table th {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+        }
+        .ui-datepicker table td a.ui-state-active {
+            background-color: #0d9488 !important;
+            color: #ffffff !important;
+        }
+
+        /* Growl / Messages */
+        .ui-growl, .ui-growl-item-container, .ui-growl-item {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-messages, .ui-message {
+            background-color: var(--mc-card-bg) !important;
+        }
+
+        /* fileUpload widget */
+        .ui-fileupload, .ui-fileupload-content, .ui-fileupload-buttonbar {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-fileupload-files .ui-fileupload-row {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+        }
+
+        /* panelGrid cells */
+        .ui-panelgrid, .ui-panelgrid-cell {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+
+        /* inputNumber wrapper span (renders its own box around the input) */
+        .ui-inputnumber, .ui-inputnumber input {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+        }
+
+        /* password field wrapper */
+        .ui-password-panel {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+
+        /* separator */
+        .ui-separator .ui-widget-content { background-color: var(--mc-card-border) !important; }
+
+        /* generic state classes some components fall back to */
+        .ui-state-default {
+            background-color: var(--mc-card-bg) !important;
+            color: var(--mc-text) !important;
+            border-color: var(--mc-card-border) !important;
+        }
+        .ui-state-hover, .ui-state-focus {
+            background-color: var(--mc-panel-title-bg) !important;
+        }
 
             /* ===== Responsive ===== */
             @media (max-width: 768px) {
@@ -229,56 +342,60 @@ and open the template in the editor.
 
                 <div class="mc-nav">
                     <h:panelGroup rendered="#{loggedInUser.loggedIn}">
-                    <h:link outcome="/dashboard" value="Dashboard"/>
+                        <h:link outcome="/dashboard" value="Dashboard"/>
 
-                    <h:link outcome="/patient/appointments" value="My Appointments"
-                             rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                    <h:link outcome="/patient/prescriptions" value="Prescriptions"
-                             rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                    <h:link outcome="/patient/billing" value="Billing"
-                             rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                    <h:link outcome="/patient/profile" value="My Profile"
-                             rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                        <h:link outcome="/patient/appointments" value="My Appointments"
+                                rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                        <h:link outcome="/patient/prescriptions" value="Prescriptions"
+                                rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                        <h:link outcome="/patient/billing" value="Billing"
+                                rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
+                        <h:link outcome="/patient/profile" value="My Profile"
+                                rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
 
-                    <h:link outcome="/doctor/appointments" value="My Appointments"
-                             rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-                    <h:link outcome="/doctor/schedule" value="My Availability"
-                             rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-                    <h:link outcome="/doctor/profile" value="My Profile"
-                             rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                        <h:link outcome="/doctor/appointments" value="My Appointments"
+                                rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                        <h:link outcome="/doctor/schedule" value="My Availability"
+                                rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
+                        <h:link outcome="/doctor/profile" value="My Profile"
+                                rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
 
-                    <h:link outcome="/receptionist/appointments" value="Appointments"
-                             rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-                    <h:link outcome="/receptionist/patients" value="Patients"
-                             rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-                    <h:link outcome="/receptionist/invoices" value="Invoices"
-                             rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
-                     <h:link outcome="/receptionist/book-appointment" value="Book Appointment"
-                             rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                        <h:link outcome="/receptionist/appointments" value="Appointments"
+                                rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                        <h:link outcome="/receptionist/patients" value="Patients"
+                                rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                        <h:link outcome="/receptionist/invoices" value="Invoices"
+                                rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
+                        <h:link outcome="/receptionist/book-appointment" value="Book Appointment"
+                                rendered="#{loggedInUser.roleName == 'RECEPTIONIST'}"/>
 
-                    <h:link outcome="/admin/staff-list" value="Staff"
-                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                    <h:link outcome="/admin/patients" value="Patients"
-                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                    <h:link outcome="/admin/appointments" value="Appointments"
-                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                    <h:link outcome="/admin/invoices" value="Invoices"
-                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                    <h:link outcome="/admin/doctor-schedules" value="Doctor Schedules"
-                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                    <h:link outcome="/admin/reports" value="Reports"
-                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
-                    <h:link outcome="/admin/server-logs" value="Server Logs"
-                             rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                        <h:link outcome="/admin/staff-list" value="Staff"
+                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                        <h:link outcome="/admin/patients" value="Patients"
+                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                        <h:link outcome="/admin/appointments" value="Appointments"
+                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                        <h:link outcome="/admin/invoices" value="Invoices"
+                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                        <h:link outcome="/admin/doctor-schedules" value="Doctor Schedules"
+                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                        <h:link outcome="/admin/reports" value="Reports"
+                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
+                        <h:link outcome="/admin/server-logs" value="Server Logs"
+                                rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
 
-                    <h:link outcome="/profile-photo" value="Profile Photo"/>
+                        <h:link outcome="/profile-photo" value="Profile Photo"/>
 
-                    <span class="mc-role-badge">#{loggedInUser.roleName}</span>
+                        <span class="mc-role-badge">#{loggedInUser.roleName}</span>
 
-                    <h:form class="mc-logout-btn">
-                        <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{loggedInUser.logout}" ajax="false"/>
-                    </h:form>
-                </h:panelGroup>
+                        <h:form class="mc-logout-btn">
+                            <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{loggedInUser.logout}" ajax="false"/>
+                        </h:form>
+                    </h:panelGroup>
+                    
+                    <button type="button" class="mc-theme-toggle" onclick="mcToggleTheme()">
+                        <span id="mcThemeIcon">🌙</span>
+                    </button>
 
                     <h:panelGroup rendered="#{!loggedInUser.loggedIn}">
                         <h:link outcome="/login" value="Login"/>
@@ -304,5 +421,20 @@ and open the template in the editor.
             </div>
 
         </div>
+        
+        <script>
+            function mcToggleTheme() {
+                var html = document.documentElement;
+                var current = html.getAttribute('data-theme');
+                var next = current === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('mc-theme', next);
+                document.getElementById('mcThemeIcon').textContent = next === 'dark' ? '☀️' : '🌙';
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                var icon = document.getElementById('mcThemeIcon');
+                if (icon) icon.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+            });
+        </script>
     </h:body>
 </html>
