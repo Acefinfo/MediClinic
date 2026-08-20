@@ -12,7 +12,7 @@ and open the template in the editor.
                  xmlns:p="http://primefaces.org/ui"
                  template="/template.xhtml">
 
-    <ui:define name="title">Login</ui:define>
+    <ui:define name="title">#{msg['login.welcomeBack']}</ui:define>
 
     <ui:define name="content">
         <div class="mc-center-wrap">
@@ -20,12 +20,12 @@ and open the template in the editor.
                 <h:form id="loginForm">
                     <p:growl id="message" showDetail="true"/>
 
-                    <p:panel header="Welcome Back">
-                        <p class="mc-muted" style="margin-top:0;">Sign in to your MediClinic account.</p>
+                    <p:panel header="#{msg['login.welcomeBack']}">
+                        <p class="mc-muted" style="margin-top:0;">#{msg['login.subtitle']}</p>
 
                         <p:panelGrid columns="1" layout="grid" style="width:100%;">
 
-                            <p:outputLabel for="email" value="Email"/>
+                            <p:outputLabel for="email" value="#{msg['common.email']}"/>
                             <p:inputText id="email" value="#{loginBean.email}"
                                          required="true" requiredMessage="Email is required"
                                          validatorMessage="Please enter a valid email address"
@@ -33,7 +33,7 @@ and open the template in the editor.
                                 <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"/>
                             </p:inputText>
 
-                            <p:outputLabel for="password" value="Password"/>
+                            <p:outputLabel for="password" value="#{msg['common.password']}"/>
                             <p:password id="password" value="#{loginBean.password}"
                                         required="true" requiredMessage="Password is required"
                                         feedback="false" toggleMask="true"
@@ -42,13 +42,13 @@ and open the template in the editor.
                         </p:panelGrid>
 
                         <br/>
-                        <p:commandButton value="Log In" icon="pi pi-sign-in" action="#{loginBean.login}"
+                        <p:commandButton value="#{msg['login.submit']}" icon="pi pi-sign-in" action="#{loginBean.login}"
                                           update="loginForm message" style="width:100%;"/>
 
                         <div style="text-align:center; margin-top:16px;">
-                            <p:link outcome="register" value="Don't have an account? Register"/>
+                            <p:link outcome="register" value="#{msg['login.noAccount']}"/>
                             <br/>
-                            <p:link outcome="forgot-password" value="Forgot your password?"/>
+                            <p:link outcome="forgot-password" value="#{msg['login.forgotPassword']}"/>
                         </div>
                     </p:panel>
                 </h:form>

@@ -12,7 +12,7 @@ and open the template in the editor.
                  xmlns:p="http://primefaces.org/ui"
                  template="/template.xhtml">
 
-    <ui:define name="title">Dashboard</ui:define>
+    <ui:define name="title">#{msg['nav.dashboard']}</ui:define>
 
     <ui:define name="content">
         <h:form id="dashboardForm">
@@ -23,77 +23,77 @@ and open the template in the editor.
                                 style="border-radius:50%; border:2px solid #0d9488;"/>
                 <div>
                     <h1 class="mc-page-title" style="margin-bottom:2px;">
-                        Welcome, #{loggedInUser.user.email}
+                        #{msg['dashboard.welcome']}, #{loggedInUser.user.email}
                     </h1>
-                    <span class="mc-muted">Role: #{loggedInUser.roleName}</span>
+                    <span class="mc-muted">#{msg['dashboard.role']}: #{loggedInUser.roleName}</span>
                 </div>
             </div>
 
             <!-- ===== Admin / Receptionist widgets ===== -->
             <p:panelGrid columns="4" layout="grid" columnClasses="ui-g-3,ui-g-3,ui-g-3,ui-g-3"
                          rendered="#{loggedInUser.roleName == 'ADMIN' or loggedInUser.roleName == 'RECEPTIONIST'}">
-                <p:panel header="Today's Appointments">
+                <p:panel header="#{msg['dashboard.todayAppointments']}">
                     <h:outputText value="#{dashboardBean.todayAppointments}" styleClass="mc-stat-value"/>
                 </p:panel>
-                <p:panel header="Pending Approvals">
+                <p:panel header="#{msg['dashboard.pendingApprovals']}">
                     <h:outputText value="#{dashboardBean.pendingApprovals}" styleClass="mc-stat-value"/>
                 </p:panel>
-                <p:panel header="Unpaid Invoices">
+                <p:panel header="#{msg['dashboard.unpaidInvoices']}">
                     <h:outputText value="#{dashboardBean.unpaidInvoices}" styleClass="mc-stat-value"/>
                 </p:panel>
-                <p:panel header="Revenue This Month">
+                <p:panel header="#{msg['dashboard.revenueThisMonth']}">
                     <h:outputText value="#{dashboardBean.revenueThisMonth}" styleClass="mc-stat-value">
                         <f:convertNumber type="currency" currencySymbol="Rs. "/>
                     </h:outputText>
                 </p:panel>
-                <p:panel header="Total Patients" rendered="#{loggedInUser.roleName == 'ADMIN'}">
+                <p:panel header="#{msg['dashboard.totalPatients']}" rendered="#{loggedInUser.roleName == 'ADMIN'}">
                     <h:outputText value="#{dashboardBean.totalPatients}" styleClass="mc-stat-value"/>
                 </p:panel>
-                <p:panel header="Total Doctors" rendered="#{loggedInUser.roleName == 'ADMIN'}">
+                <p:panel header="#{msg['dashboard.totalDoctors']}" rendered="#{loggedInUser.roleName == 'ADMIN'}">
                     <h:outputText value="#{dashboardBean.totalDoctors}" styleClass="mc-stat-value"/>
                 </p:panel>
-                <p:panel header="Total Revenue (All Time)" rendered="#{loggedInUser.roleName == 'ADMIN'}">
+                <p:panel header="#{msg['dashboard.totalRevenue']}" rendered="#{loggedInUser.roleName == 'ADMIN'}">
                     <h:outputText value="#{dashboardBean.totalRevenue}" styleClass="mc-stat-value">
                         <f:convertNumber type="currency" currencySymbol="Rs. "/>
                     </h:outputText>
                 </p:panel>
             </p:panelGrid>
 
-            <p:panel header="Recent Activity" toggleable="true"
+            <p:panel header="#{msg['dashboard.recentActivity']}" toggleable="true"
                      rendered="#{loggedInUser.roleName == 'ADMIN' or loggedInUser.roleName == 'RECEPTIONIST'}"
                      style="margin-top:20px;">
                 <p:dataTable value="#{dashboardBean.recentActivity}" var="log" rows="8">
-                    <p:column headerText="When"><h:outputText value="#{log.timestamp}"><f:convertDateTime pattern="dd MMM yyyy HH:mm"/></h:outputText></p:column>
-                    <p:column headerText="Action"><h:outputText value="#{log.action}"/></p:column>
-                    <p:column headerText="Details"><h:outputText value="#{log.details}"/></p:column>
+                    <p:column headerText="#{msg['dashboard.when']}"><h:outputText value="#{log.timestamp}"><f:convertDateTime pattern="dd MMM yyyy HH:mm"/></h:outputText></p:column>
+                    <p:column headerText="#{msg['dashboard.action']}"><h:outputText value="#{log.action}"/></p:column>
+                    <p:column headerText="#{msg['dashboard.details']}"><h:outputText value="#{log.details}"/></p:column>
                 </p:dataTable>
             </p:panel>
 
             <!-- ===== Doctor widgets ===== -->
             <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-6,ui-g-6"
                          rendered="#{loggedInUser.roleName == 'DOCTOR'}">
-                <p:panel header="Upcoming Appointments">
+                <p:panel header="#{msg['dashboard.upcomingAppointments']}">
                     <h:outputText value="#{dashboardBean.myUpcomingAppointments}" styleClass="mc-stat-value"/>
                 </p:panel>
-                <p:panel header="Completed Consultations">
+                <p:panel header="#{msg['dashboard.completedConsultations']}">
                     <h:outputText value="#{dashboardBean.myCompletedConsultations}" styleClass="mc-stat-value"/>
                 </p:panel>
             </p:panelGrid>
-            <p:panel header="Today's Appointments" rendered="#{loggedInUser.roleName == 'DOCTOR'}" style="margin-top:20px;">
+            <p:panel header="#{msg['dashboard.todayAppointments']}" rendered="#{loggedInUser.roleName == 'DOCTOR'}" style="margin-top:20px;">
                 <p:dataTable value="#{dashboardBean.myTodaysAppointments}" var="appt" rows="10">
-                    <p:column headerText="Time"><h:outputText value="#{appt.appointmentTime}"><f:convertDateTime pattern="HH:mm" type="time"/></h:outputText></p:column>
-                    <p:column headerText="Patient"><h:outputText value="#{appt.patient.name}"/></p:column>
-                    <p:column headerText="Status"><h:outputText value="#{appt.status}"/></p:column>
+                    <p:column headerText="#{msg['common.time']}"><h:outputText value="#{appt.appointmentTime}"><f:convertDateTime pattern="HH:mm" type="time"/></h:outputText></p:column>
+                    <p:column headerText="#{msg['consultation.patient']}"><h:outputText value="#{appt.patient.name}"/></p:column>
+                    <p:column headerText="#{msg['common.status']}"><h:outputText value="#{appt.status}"/></p:column>
                 </p:dataTable>
             </p:panel>
 
             <!-- ===== Patient widgets ===== -->
             <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-6,ui-g-6"
                          rendered="#{loggedInUser.roleName == 'PATIENT'}">
-                <p:panel header="Upcoming Appointments">
+                <p:panel header="#{msg['dashboard.upcomingAppointments']}">
                     <h:outputText value="#{dashboardBean.myUpcomingAppointmentsAsPatient}" styleClass="mc-stat-value"/>
                 </p:panel>
-                <p:panel header="Unpaid Invoices">
+                <p:panel header="#{msg['dashboard.unpaidInvoices']}">
                     <h:outputText value="#{dashboardBean.myUnpaidInvoices}" styleClass="mc-stat-value"/>
                 </p:panel>
             </p:panelGrid>

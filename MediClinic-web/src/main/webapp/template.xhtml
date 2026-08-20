@@ -9,12 +9,17 @@ and open the template in the editor.
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      lang="#{localeBean.language}">
 
     <h:head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title><ui:insert name="title">MediClinic</ui:insert></title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 
         <!-- Set theme BEFORE paint to avoid a flash of the wrong theme -->
         <script>
@@ -73,6 +78,15 @@ and open the template in the editor.
                 color: var(--mc-text);
                 transition: background-color 0.2s ease, color 0.2s ease;
             }
+
+            /* Nepali (Devanagari) — swap page font when locale is 'ne' */
+            html[lang="ne"] body {
+                font-family: 'Noto Sans Devanagari', 'Mangal', 'Nirmala UI', 'Arial Unicode MS', sans-serif;
+            }
+            html[lang="ne"] {
+                font-size: 1.03em;
+            }
+
             a { color: var(--mc-link); text-decoration: none; }
             a:hover { color: var(--mc-link-hover); text-decoration: underline; }
 
@@ -123,6 +137,12 @@ and open the template in the editor.
             }
             .mc-theme-toggle:hover { background-color: var(--mc-nav-hover-bg); }
 
+            /* ===== Language switch link (matches nav link style) ===== */
+            .mc-lang-switch {
+                margin-left: 4px;
+                font-weight: 600 !important;
+            }
+
             /* ===== Footer ===== */
             .mc-footer {
                 flex-shrink: 0; background-color: var(--mc-header-bg); color: #94a3b8;
@@ -165,158 +185,132 @@ and open the template in the editor.
             .ui-messages-info, .ui-message-info { border-color: #0d9488 !important; color: #0f766e !important; }
             .ui-inputfield, input.ui-inputfield, textarea.ui-inputfield {
                 background-color: var(--mc-card-bg) !important; color: var(--mc-text) !important; border-color: var(--mc-card-border) !important;
-                
             }
-                    /* ===== PrimeFaces dark-mode coverage (base widget classes + overlays) ===== */
 
-        /* Base widget content/header used by dataTable, panel, dialog, fieldset, etc. */
-        .ui-widget-content {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-widget-header {
-            background-color: var(--mc-panel-title-bg) !important;
-            color: var(--mc-text) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-widget {
-            color: var(--mc-text) !important;
-        }
-
-        /* Row striping */
-        .ui-datatable-odd, .ui-datatable tbody tr.ui-datatable-odd,
-        .ui-datatable-even, .ui-datatable tbody tr.ui-datatable-even {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-        }
-        .ui-datatable tbody tr:hover { background-color: var(--mc-panel-title-bg) !important; }
-
-        /* Paginator (bottom/top of dataTable) */
-        .ui-paginator, .ui-paginator-bottom, .ui-paginator-top {
-            background-color: var(--mc-card-bg) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-paginator .ui-paginator-page, .ui-paginator .ui-paginator-next,
-        .ui-paginator .ui-paginator-prev, .ui-paginator .ui-paginator-first,
-        .ui-paginator .ui-paginator-last {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-paginator .ui-state-active {
-            background-color: #0d9488 !important;
-            color: #ffffff !important;
-        }
-
-        /* Dialog (p:dialog) */
-        .ui-dialog {
-            background-color: var(--mc-card-bg) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-dialog .ui-dialog-titlebar {
-            background-color: var(--mc-panel-title-bg) !important;
-            color: var(--mc-text) !important;
-        }
-        .ui-dialog .ui-dialog-content {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-        }
-        .ui-dialog-mask, .ui-widget-overlay {
-            background-color: rgba(0,0,0,0.55) !important;
-        }
-
-        /* selectOneMenu dropdown panel (renders as an overlay outside .mc-page) */
-        .ui-selectonemenu {
-            background-color: var(--mc-card-bg) !important;
-            border-color: var(--mc-card-border) !important;
-            color: var(--mc-text) !important;
-        }
-        .ui-selectonemenu-panel {
-            background-color: var(--mc-card-bg) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-selectonemenu-items .ui-selectonemenu-item {
-            color: var(--mc-text) !important;
-            background-color: var(--mc-card-bg) !important;
-        }
-        .ui-selectonemenu-items .ui-selectonemenu-item.ui-state-highlight {
-            background-color: #0d9488 !important;
-            color: #ffffff !important;
-        }
-
-        /* Calendar / datepicker popup (also an overlay) */
-        .ui-datepicker {
-            background-color: var(--mc-card-bg) !important;
-            border-color: var(--mc-card-border) !important;
-            color: var(--mc-text) !important;
-        }
-        .ui-datepicker .ui-datepicker-header {
-            background-color: var(--mc-panel-title-bg) !important;
-            color: var(--mc-text) !important;
-        }
-        .ui-datepicker table td, .ui-datepicker table th {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-        }
-        .ui-datepicker table td a.ui-state-active {
-            background-color: #0d9488 !important;
-            color: #ffffff !important;
-        }
-
-        /* Growl / Messages */
-        .ui-growl, .ui-growl-item-container, .ui-growl-item {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-messages, .ui-message {
-            background-color: var(--mc-card-bg) !important;
-        }
-
-        /* fileUpload widget */
-        .ui-fileupload, .ui-fileupload-content, .ui-fileupload-buttonbar {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-fileupload-files .ui-fileupload-row {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-        }
-
-        /* panelGrid cells */
-        .ui-panelgrid, .ui-panelgrid-cell {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-
-        /* inputNumber wrapper span (renders its own box around the input) */
-        .ui-inputnumber, .ui-inputnumber input {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-        }
-
-        /* password field wrapper */
-        .ui-password-panel {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-
-        /* separator */
-        .ui-separator .ui-widget-content { background-color: var(--mc-card-border) !important; }
-
-        /* generic state classes some components fall back to */
-        .ui-state-default {
-            background-color: var(--mc-card-bg) !important;
-            color: var(--mc-text) !important;
-            border-color: var(--mc-card-border) !important;
-        }
-        .ui-state-hover, .ui-state-focus {
-            background-color: var(--mc-panel-title-bg) !important;
-        }
+            /* ===== PrimeFaces dark-mode coverage (base widget classes + overlays) ===== */
+            .ui-widget-content {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-widget-header {
+                background-color: var(--mc-panel-title-bg) !important;
+                color: var(--mc-text) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-widget {
+                color: var(--mc-text) !important;
+            }
+            .ui-datatable-odd, .ui-datatable tbody tr.ui-datatable-odd,
+            .ui-datatable-even, .ui-datatable tbody tr.ui-datatable-even {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-datatable tbody tr:hover { background-color: var(--mc-panel-title-bg) !important; }
+            .ui-paginator, .ui-paginator-bottom, .ui-paginator-top {
+                background-color: var(--mc-card-bg) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-paginator .ui-paginator-page, .ui-paginator .ui-paginator-next,
+            .ui-paginator .ui-paginator-prev, .ui-paginator .ui-paginator-first,
+            .ui-paginator .ui-paginator-last {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-paginator .ui-state-active {
+                background-color: #0d9488 !important;
+                color: #ffffff !important;
+            }
+            .ui-dialog {
+                background-color: var(--mc-card-bg) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-dialog .ui-dialog-titlebar {
+                background-color: var(--mc-panel-title-bg) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-dialog .ui-dialog-content {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-dialog-mask, .ui-widget-overlay {
+                background-color: rgba(0,0,0,0.55) !important;
+            }
+            .ui-selectonemenu {
+                background-color: var(--mc-card-bg) !important;
+                border-color: var(--mc-card-border) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-selectonemenu-panel {
+                background-color: var(--mc-card-bg) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-selectonemenu-items .ui-selectonemenu-item {
+                color: var(--mc-text) !important;
+                background-color: var(--mc-card-bg) !important;
+            }
+            .ui-selectonemenu-items .ui-selectonemenu-item.ui-state-highlight {
+                background-color: #0d9488 !important;
+                color: #ffffff !important;
+            }
+            .ui-datepicker {
+                background-color: var(--mc-card-bg) !important;
+                border-color: var(--mc-card-border) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-datepicker .ui-datepicker-header {
+                background-color: var(--mc-panel-title-bg) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-datepicker table td, .ui-datepicker table th {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-datepicker table td a.ui-state-active {
+                background-color: #0d9488 !important;
+                color: #ffffff !important;
+            }
+            .ui-growl, .ui-growl-item-container, .ui-growl-item {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-messages, .ui-message {
+                background-color: var(--mc-card-bg) !important;
+            }
+            .ui-fileupload, .ui-fileupload-content, .ui-fileupload-buttonbar {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-fileupload-files .ui-fileupload-row {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-panelgrid, .ui-panelgrid-cell {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-inputnumber, .ui-inputnumber input {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+            }
+            .ui-password-panel {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-separator .ui-widget-content { background-color: var(--mc-card-border) !important; }
+            .ui-state-default {
+                background-color: var(--mc-card-bg) !important;
+                color: var(--mc-text) !important;
+                border-color: var(--mc-card-border) !important;
+            }
+            .ui-state-hover, .ui-state-focus {
+                background-color: var(--mc-panel-title-bg) !important;
+            }
 
             /* ===== Responsive ===== */
             @media (max-width: 768px) {
@@ -330,6 +324,10 @@ and open the template in the editor.
     </h:head>
 
     <h:body>
+        <f:metadata>
+            <f:viewAction action="#{localeBean.switchLanguage(localeBean.language)}"/>
+        </f:metadata>
+
         <div class="mc-page">
 
             <!-- ===== Header ===== -->
@@ -342,22 +340,22 @@ and open the template in the editor.
 
                 <div class="mc-nav">
                     <h:panelGroup rendered="#{loggedInUser.loggedIn}">
-                        <h:link outcome="/dashboard" value="Dashboard"/>
+                        <h:link outcome="/dashboard" value="#{msg['nav.dashboard']}"/>
 
-                        <h:link outcome="/patient/appointments" value="My Appointments"
+                        <h:link outcome="/patient/appointments" value="#{msg['nav.myAppointments']}"
                                 rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                        <h:link outcome="/patient/prescriptions" value="Prescriptions"
+                        <h:link outcome="/patient/prescriptions" value="#{msg['nav.prescriptions']}"
                                 rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                        <h:link outcome="/patient/billing" value="Billing"
+                        <h:link outcome="/patient/billing" value="#{msg['nav.billing']}"
                                 rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
-                        <h:link outcome="/patient/profile" value="My Profile"
+                        <h:link outcome="/patient/profile" value="#{msg['nav.myProfile']}"
                                 rendered="#{loggedInUser.roleName == 'PATIENT'}"/>
 
-                        <h:link outcome="/doctor/appointments" value="My Appointments"
+                        <h:link outcome="/doctor/appointments" value="#{msg['nav.myAppointments']}"
                                 rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
                         <h:link outcome="/doctor/schedule" value="My Availability"
                                 rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
-                        <h:link outcome="/doctor/profile" value="My Profile"
+                        <h:link outcome="/doctor/profile" value="#{msg['nav.myProfile']}"
                                 rendered="#{loggedInUser.roleName == 'DOCTOR'}"/>
 
                         <h:link outcome="/receptionist/appointments" value="Appointments"
@@ -384,22 +382,27 @@ and open the template in the editor.
                         <h:link outcome="/admin/server-logs" value="Server Logs"
                                 rendered="#{loggedInUser.roleName == 'ADMIN'}"/>
 
-                        <h:link outcome="/profile-photo" value="Profile Photo"/>
+                        <h:link outcome="/profile-photo" value="#{msg['nav.profilePhoto']}"/>
 
                         <span class="mc-role-badge">#{loggedInUser.roleName}</span>
 
                         <h:form class="mc-logout-btn">
-                            <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{loggedInUser.logout}" ajax="false"/>
+                            <p:commandButton value="#{msg['nav.logout']}" icon="pi pi-sign-out" action="#{loggedInUser.logout}" ajax="false"/>
                         </h:form>
                     </h:panelGroup>
-                    
+
                     <button type="button" class="mc-theme-toggle" onclick="mcToggleTheme()">
                         <span id="mcThemeIcon">🌙</span>
                     </button>
 
+                    <h:form>
+                        <p:commandLink value="#{localeBean.toggleLabel}" styleClass="mc-navlink mc-lang-switch"
+                                        action="#{localeBean.toggleLanguage()}" ajax="false"/>
+                    </h:form>
+
                     <h:panelGroup rendered="#{!loggedInUser.loggedIn}">
-                        <h:link outcome="/login" value="Login"/>
-                        <h:link outcome="/register" value="Register"/>
+                        <h:link outcome="/login" value="#{msg['nav.login']}"/>
+                        <h:link outcome="/register" value="#{msg['nav.register']}"/>
                     </h:panelGroup>
                 </div>
             </div>
@@ -412,16 +415,16 @@ and open the template in the editor.
             <!-- ===== Footer ===== -->
             <div class="mc-footer">
                 <div class="mc-footer-links">
-                    <h:link outcome="/dashboard" value="Dashboard" rendered="#{loggedInUser.loggedIn}"/>
-                    <h:link outcome="/login" value="Login" rendered="#{!loggedInUser.loggedIn}"/>
-                    <h:link outcome="/register" value="Register" rendered="#{!loggedInUser.loggedIn}"/>
-                    <h:link outcome="/forgot-password" value="Forgot Password" rendered="#{!loggedInUser.loggedIn}"/>
+                    <h:link outcome="/dashboard" value="#{msg['nav.dashboard']}" rendered="#{loggedInUser.loggedIn}"/>
+                    <h:link outcome="/login" value="#{msg['nav.login']}" rendered="#{!loggedInUser.loggedIn}"/>
+                    <h:link outcome="/register" value="#{msg['nav.register']}" rendered="#{!loggedInUser.loggedIn}"/>
+                    <h:link outcome="/forgot-password" value="#{msg['footer.forgotPassword']}" rendered="#{!loggedInUser.loggedIn}"/>
                 </div>
-                <div>&#169; MediClinic. All rights reserved.</div>
+                <div>&#169; MediClinic. #{msg['footer.rights']}</div>
             </div>
 
         </div>
-        
+
         <script>
             function mcToggleTheme() {
                 var html = document.documentElement;
